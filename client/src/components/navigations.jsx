@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 export default function Navigation({ user }) {
   return (
     <nav className="navbar">
-      <Link to="/">Home</Link>
+        <h1>Dr Pepper Reviews</h1>
+        <Link to="/home">Home</Link>
+        <Link to="/flavors">Flavors</Link>
     </nav>
   );
 }

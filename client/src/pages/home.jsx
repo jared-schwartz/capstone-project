@@ -5,6 +5,7 @@ function Home({user, setUser, token, setToken}){
 
     return (
         <>
+        <h1>Home</h1>
         </>
     )
 }

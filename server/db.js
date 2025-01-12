@@ -1,8 +1,3 @@
-const pg = require("pg");
-const client = new pg.Client(
-  process.env.DATABASE_URL || "postgres://localhost/drPepper_db"
-);
-
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -10,8 +5,6 @@ const JWT = process.env.JWT || "shhh";
 
 const createTables = (async) => {
   const SQL = `  
-
-    
     CREATE TABLE users(
         id UUID PRIMARY KEY,
         username VARCHAR(20) UNIQUE NOT NULL,
@@ -44,6 +37,5 @@ const createTables = (async) => {
     `;
 };
 module.exports = {
-  client,
   createTables,
 };

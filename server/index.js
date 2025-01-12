@@ -1,4 +1,5 @@
-const { client, createTables } = require("./db");
+const { createTables } = require("./db");
+const { client } = require("./server")
 
 const express = require("express");
 
@@ -10,7 +11,7 @@ app.use(express.json());
 
 app.get("/", (res, req, next) => {
   try {
-  } catch (error) {}
+  } catch (error) { }
 });
 
 const init = async () => {

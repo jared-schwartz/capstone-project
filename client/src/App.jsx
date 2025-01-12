@@ -15,9 +15,10 @@ function App() {
       <header>
         <Navigation user={user} />
       </header>
+      <h1>Dr Pepper</h1>
       <div className="container">
         <Routes>
-          <Route path="/home" element={<Home user={user} token={token} />} />
+          <Route path="/" element={<Home user={user} token={token} />} />
           <Route path="/flavors" element={<Flavors />} />
         </Routes>
       </div>

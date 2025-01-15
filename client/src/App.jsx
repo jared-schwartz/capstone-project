@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import Navigation from "./components/navigations";
 import Home from "./pages/home";
 import Flavors from "./pages/flavors";
+import Reviews from "./pages/reviews";
+import Login from "./pages/login";
 
 
 
@@ -15,11 +17,12 @@ function App() {
       <header>
         <Navigation user={user} />
       </header>
-      <h1>Dr Pepper</h1>
       <div className="container">
         <Routes>
           <Route path="/" element={<Home user={user} token={token} />} />
           <Route path="/flavors" element={<Flavors />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </>

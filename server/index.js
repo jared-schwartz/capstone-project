@@ -4,6 +4,7 @@ const {
   createUser,
   fetchUsers,
   createFlavor,
+  fetchFlavors,
 } = require("./db");
 
 const express = require("express");
@@ -17,6 +18,14 @@ app.use(express.json());
 app.get("./api/users", async (res, req, next) => {
   try {
     res.send(await fetchUsers());
+  } catch (ex) {
+    next(ex);
+  }
+});
+
+app.get("./api/flavors", async (res, req, next) => {
+  try {
+    res.send(await fetchFlavors());
   } catch (ex) {
     next(ex);
   }

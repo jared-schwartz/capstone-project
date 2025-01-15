@@ -1,3 +1,5 @@
+const { client } = require("./server")
+
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -15,7 +17,7 @@ const createTables = (async) => {
     CREATE TABLE flavors(
         id UUID PRIMARY KEY,
         name VARCHAR(50) UNIQUE NOT NULL,
-        created_at TIMESTAME DEFAULD now(),
+        created_at TIMESTAMP DEFAULT now(),
         description VARCHAR(255),
         photo_URL VARCHAR(255),
         average_Score REAL,
@@ -25,6 +27,7 @@ const createTables = (async) => {
         id UUID PRIMARY KEY,
         user_id UUID REFERENCES users(id) NOT NULL,
         flavor_id UUID REFERENCES flavors(id) NOT NULL,
+        posted TIMESTAMP default now(),
         content VARCHAR(500),
         score INTEGER
         );
@@ -32,10 +35,21 @@ const createTables = (async) => {
         id UUID PRIMARY KEY,
         user_id UUID REFERENCES users(id) NOT NULL,
         flavor_id UUID REFERENCES flavors(id) NOT NULL,
-        content VARCHAR(500) NOT NULL,
+        posted TIMESTAMP default now(),
+        content VARCHAR(500) NOT NULL
         );
     `;
 };
+
+const createReview = async ({ user_id, flavor_id, content, score }) => {
+  const SQL = `
+    INSERT INTO reviews(id, user_id, flavor_id, content, score) VALUES($1, $2, $3, $4, $5) RETURNING *
+  `;
+  const response = await client.query(SQL, [uuid.v4(), user_id, flavor_id, content, score]);
+  return response.rows[0];
+};
+
 module.exports = {
   createTables,
+  createReview
 };

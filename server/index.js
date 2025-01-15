@@ -25,6 +25,13 @@ const init = async () => {
 
   console.log("tables created");
 
+  const user = await Promise.all([
+    createUserSkill({ user_id: moe.id, skill_id: plateSpinning.id }),
+    createUserSkill({ user_id: moe.id, skill_id: dancing.id }),
+    createUserSkill({ user_id: ethyl.id, skill_id: singing.id }),
+    createUserSkill({ user_id: ethyl.id, skill_id: juggling.id })
+  ]);
+
   app.listen(port, () => console.log(`listening on port ${port}`));
 };
 

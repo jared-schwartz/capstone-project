@@ -1,8 +1,4 @@
-
-const pg = require("pg");
-const client = new pg.Client(
-  process.env.DATABASE_URL || "postgres://localhost/drPepper_db"
-);
+const { client } = require("./server.js")
 
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");
@@ -43,7 +39,7 @@ const createTables = async () => {
     CREATE TABLE comments(
         id UUID PRIMARY KEY,
         user_id UUID REFERENCES users(id) NOT NULL,
-        flavor_id UUID REFERENCES flavors(id) NOT NULL,
+        review_id UUID REFERENCES reviews(id) NOT NULL,
         content VARCHAR(500) NOT NULL
         );
     `;
@@ -76,6 +72,34 @@ const createFlavor = async ({ name, description, photo_URL }) => {
   return response.rows[0];
 };
 
+const createReview = async ({ user_id, flavor_id, content, score }) => {
+  const SQL = `
+        INSERT INTO reviews(id, user_id , flavor_id, content, score) VALUES($1, $2, $3, $4, $5) RETURNING *
+      `;
+  const response = await client.query(SQL, [
+    uuid.v4(),
+    user_id,
+    flavor_id,
+    content,
+    score
+  ]);
+  return response.rows[0];
+};
+
+const createComment = async ({ user_id, review_id, content }) => {
+  const SQL = `
+        INSERT INTO comments(id, user_id , review_id, content) VALUES($1, $2, $3, $4) RETURNING *
+      `;
+  const response = await client.query(SQL, [
+    uuid.v4(),
+    user_id,
+    review_id,
+    content
+  ]);
+  return response.rows[0];
+};
+
+
 const fetchUsers = async () => {
   const SQL = `
       SELECT id, username FROM users;
@@ -92,6 +116,30 @@ const fetchFlavors = async () => {
   return response.rows;
 };
 
+const fetchFlavorReview = async ({ flavor_id }) => {
+  const SQL = `
+    SELECT * FROM reviews where flavor_id = $1;
+    `;
+  const response = await client.query(SQL, [flavor_id]);
+  return response.rows;
+};
+
+const fetchUserReview = async ({ user_id }) => {
+  const SQL = `
+    SELECT * FROM reviews where user_id = $1;
+    `;
+  const response = await client.query(SQL, [user_id]);
+  return response.rows;
+};
+
+const fetchReviewComment = async ({ user_id }) => {
+  const SQL = `
+    SELECT * FROM reviews where user_id = $1;
+    `;
+  const response = await client.query(SQL, [user_id]);
+  return response.rows;
+};
+
 module.exports = {
   client,
   createTables,
@@ -99,5 +147,9 @@ module.exports = {
   fetchUsers,
   createFlavor,
   fetchFlavors,
+  createReview,
+  fetchFlavorReview,
+  fetchUserReview,
+  createComment,
+  fetchReviewComment
 };
-

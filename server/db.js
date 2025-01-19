@@ -102,9 +102,10 @@ const createReview = async ({ user_id, flavor_id, content, score }) => {
 
 const fetchUsers = async () => {
   const SQL = `
-      SELECT id, username FROM users;
+      SELECT * FROM users;
     `;
   const response = await client.query(SQL);
+  console.log(response);
   return response.rows;
 };
 

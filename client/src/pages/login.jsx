@@ -1,30 +1,49 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 async function loginUser(credentials) {
   try {
-    const response = await fetch(
-      `https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/users/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      }
-    );
+    const response = await fetch("/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
+
     if (!response.ok) {
-      throw new Error(`Login failed: ${response.statusText}`);
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Login failed");
     }
+
     const result = await response.json();
-    return result.token;
+    return result.token; 
   } catch (error) {
-    console.error(error);
+    console.error("Login error:", error.message);
     return null;
   }
 }
 
-function Login({ user, setUser, token, setToken }) {
+async function selectUser() {
+  try {
+    const response = await fetch ("/api/users",{
+      method: "GET",
+    });
+    const result = await response.json();
+    console.log(result);
+  } catch (error) {
+    console.error("It didnt work...", error);
+  }
+}
+
+
+
+
+
+
+
+function Login({ setUser, setToken }) {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
     username: "",
@@ -42,17 +61,18 @@ function Login({ user, setUser, token, setToken }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = await loginUser(credentials);
+
     if (token) {
-      setToken(token);
-      setUser({ username: credentials.username }); // Customize as needed
-      navigate("/dashboard"); // Redirect to your desired route
+      setToken(token); 
+      setUser({ username: credentials.username }); 
+      navigate("/"); 
     } else {
       alert("Login failed. Please check your credentials and try again.");
     }
   };
 
   return (
-    <>
+    <div>
       <form id="login-form" onSubmit={handleSubmit}>
         <h1>
           <u>Login</u>
@@ -62,12 +82,13 @@ function Login({ user, setUser, token, setToken }) {
           <br />
           <input
             required
-            name="username" // Ensure this matches the key in your credentials state
+            name="username"
             value={credentials.username}
             type="text"
             onChange={handleChange}
           />
         </label>
+        <br />
         <label>
           Password:
           <br />
@@ -79,10 +100,12 @@ function Login({ user, setUser, token, setToken }) {
             onChange={handleChange}
           />
         </label>
+        <br />
         <button type="submit">Login</button>
       </form>
-    </>
+    </div>
   );
 }
 
 export default Login;
+ 

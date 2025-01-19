@@ -77,9 +77,10 @@ const createFlavor = async ({ name, description, photo_URL }) => {
 
 const fetchUsers = async () => {
   const SQL = `
-      SELECT id, username FROM users;
+      SELECT * FROM users;
     `;
   const response = await client.query(SQL);
+  console.log(response);
   return response.rows;
 };
 

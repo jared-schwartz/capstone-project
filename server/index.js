@@ -12,20 +12,29 @@ const express = require("express");
 const app = express();
 
 app.use(express.json());
+//api routes....
+const path = require('path');
+app.get('/', (req, res)=> res.sendFile(path.join(__dirname, '../client/dist/index.html')));
+app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets')));
 
-// app routes go here............
-
-app.get("./api/users", async (res, req, next) => {
+app.get("/api/users", async (req, res, next) => {
   try {
+    console.log("trying users");
+    const users = await fetchUsers();
+    console.log(users);
     res.send(await fetchUsers());
   } catch (ex) {
+    console.log(ex);
     next(ex);
   }
 });
 
-app.get("./api/flavors", async (res, req, next) => {
+
+app.get("/api/flavors", async (req, res, next) => {
   try {
-    res.send(await fetchFlavors());
+    const flavors = await fetchFlavors();
+    console.log(flavors);
+    res.send(flavors);
   } catch (ex) {
     next(ex);
   }

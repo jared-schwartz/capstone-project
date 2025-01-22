@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Flavors() {
-    const [flavors, setFlavors] = useState([]);
+    const [flavors, setFlavors] = useState([]); // Initialize with an empty array
     const navigate = useNavigate();
+
     const handleFlavorClick = (flavor_id) => {
         navigate(`/flavors/${flavor_id}`);
     };
@@ -12,9 +13,11 @@ export default function Flavors() {
         const fetchData = async () => {
             try {
                 const response = await fetch("/api/flavors");
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
                 const jsonData = await response.json();
-                console.log(jsonData);
-                setFlavors(jsonData.flavors);
+                setFlavors(jsonData); 
             } catch (error) {
                 console.error("Error fetching flavors.", error);
             }
@@ -26,13 +29,16 @@ export default function Flavors() {
         <div id="flavors-page">
             <h1><b>Dr Pepper Flavors</b></h1>
             <ul id="flavors-catalog">
-                {flavors.map((flavor) => (
-                    <li key={flavor.id} onClick={() => handleFlavorClick(flavor.id)}>
-                        
-                        <img src={flavor.img} alt={flavor.name} width="200px" />
-                        {flavor.name}
-                    </li>
-                ))}
+                {flavors.length > 0 ? (
+                    flavors.map((flavor) => (
+                        <li key={flavor.id} onClick={() => handleFlavorClick(flavor.id)}>
+                            <img src={flavor.photo_url} alt={flavor.name} width="200px" />
+                            <br></br>{flavor.name}
+                        </li>
+                    ))
+                ) : (
+                    <p>No flavors available at the moment.</p>
+                )}
             </ul>
         </div>
     );

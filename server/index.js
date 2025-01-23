@@ -6,10 +6,6 @@ const {
   createFlavor,
   fetchFlavors,
   createReview,
-  fetchFlavorReview,
-  fetchUserReview,
-  createComment,
-  fetchReviewComment
 } = require("./db");
 
 const express = require("express");
@@ -30,7 +26,23 @@ app.get("./api/users", async (res, req, next) => {
 
 app.get("./api/flavors", async (res, req, next) => {
   try {
-    res.send(await fetchFlavors());
+    const flavors = await fetchFlavors();
+    console.log(flavors);
+    res.send(flavors);
+  } catch (ex) {
+    next(ex);
+  }
+});
+
+app.post("/api/reviews", async (req, res, next) => {
+  try {
+    const { user_id, flavor_id, content, score } = req.body;
+
+    if (!user_id || !flavor_id || !content || !score) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+    const newReview = await createReview({ user_id, flavor_id, content, score });
+    res.status(201).json(newReview);
   } catch (ex) {
     next(ex);
   }

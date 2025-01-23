@@ -1,4 +1,10 @@
-const { client } = require("./server.js")
+const pg = require("pg");
+const client = new pg.Client({
+  host:'localhost',
+  port:5432,
+  user:'postgres',
+  password:'root'
+});
 
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");
@@ -74,27 +80,16 @@ const createFlavor = async ({ name, description, photo_URL }) => {
 
 const createReview = async ({ user_id, flavor_id, content, score }) => {
   const SQL = `
-        INSERT INTO reviews(id, user_id , flavor_id, content, score) VALUES($1, $2, $3, $4, $5) RETURNING *
-      `;
-  const response = await client.query(SQL, [
-    uuid.v4(),
-    user_id,
-    flavor_id,
-    content,
-    score
-  ]);
-  return response.rows[0];
-};
+    INSERT INTO reviews (id, user_id, flavor_id, content, score) 
+    VALUES ($1, $2, $3, $4, $5) 
+    RETURNING *`;
 
-const createComment = async ({ user_id, review_id, content }) => {
-  const SQL = `
-        INSERT INTO comments(id, user_id , review_id, content) VALUES($1, $2, $3, $4) RETURNING *
-      `;
   const response = await client.query(SQL, [
-    uuid.v4(),
-    user_id,
-    review_id,
-    content
+    uuid.v4(), 
+    user_id, 
+    flavor_id, 
+    content, 
+    score
   ]);
   return response.rows[0];
 };
@@ -116,29 +111,8 @@ const fetchFlavors = async () => {
   return response.rows;
 };
 
-const fetchFlavorReview = async ({ flavor_id }) => {
-  const SQL = `
-    SELECT * FROM reviews where flavor_id = $1;
-    `;
-  const response = await client.query(SQL, [flavor_id]);
-  return response.rows;
-};
 
-const fetchUserReview = async ({ user_id }) => {
-  const SQL = `
-    SELECT * FROM reviews where user_id = $1;
-    `;
-  const response = await client.query(SQL, [user_id]);
-  return response.rows;
-};
 
-const fetchReviewComment = async ({ user_id }) => {
-  const SQL = `
-    SELECT * FROM reviews where user_id = $1;
-    `;
-  const response = await client.query(SQL, [user_id]);
-  return response.rows;
-};
 
 module.exports = {
   client,
@@ -147,9 +121,5 @@ module.exports = {
   fetchUsers,
   createFlavor,
   fetchFlavors,
-  createReview,
-  fetchFlavorReview,
-  fetchUserReview,
-  createComment,
-  fetchReviewComment
+  createReview
 };

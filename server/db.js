@@ -1,11 +1,5 @@
 const pg = require("pg");
-const client = new pg.Client({
-  host:'localhost',
-  port:5432,
-  user:'postgres',
-  password:'root'
-});
-
+const { client } = require("server.js");
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -40,7 +34,8 @@ const createTables = async () => {
         user_id UUID REFERENCES users(id) NOT NULL,
         flavor_id UUID REFERENCES flavors(id) NOT NULL,
         content VARCHAR(500),
-        score INTEGER
+        score INTEGER,
+        username VARCHAR(20) UNIQUE NOT NULL;
         );
     CREATE TABLE comments(
         id UUID PRIMARY KEY,
@@ -121,5 +116,5 @@ module.exports = {
   fetchUsers,
   createFlavor,
   fetchFlavors,
-  createReview
+  createReview, 
 };

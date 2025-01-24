@@ -16,25 +16,24 @@ app.use(express.json());
 
 // app routes go here............
 
-app.get("./api/users", async (res, req, next) => {
+app.get("/api/users", async (res, req, next) => {
   try {
-    res.send(await fetchUsers());
+    res.json(await fetchUsers());
   } catch (ex) {
     next(ex);
   }
 });
 
-app.get("./api/flavors", async (res, req, next) => {
+app.get("/api/flavors", async (res, req, next) => {
   try {
-    const flavors = await fetchFlavors();
+    res.json(await fetchFlavors());
     console.log(flavors);
-    res.send(flavors);
   } catch (ex) {
     next(ex);
   }
 });
 
-app.post("/api/reviews", async (req, res, next) => {
+app.post("./api/reviews", async (req, res, next) => {
   try {
     const { user_id, flavor_id, content, score } = req.body;
 
@@ -44,6 +43,16 @@ app.post("/api/reviews", async (req, res, next) => {
     const newReview = await createReview({ user_id, flavor_id, content, score });
     res.status(201).json(newReview);
   } catch (ex) {
+    next(ex);
+  }
+});
+
+app.post("./api/user", async (req, res, next) => {
+  try {
+    const {} = req.body;
+    createUser({username: alt, password: pw, photo_URL: ""});
+  }
+  catch (ex) {
     next(ex);
   }
 });
@@ -80,13 +89,6 @@ const init = async () => {
   ]);
 
   console.log("Reviews created");
-
-  const [comment1, comment2, comment3, comment4] = await Promise.all([
-    createComment({ user_id: jared.id, review_id: review1.id, content: "Think about this, your going to be showing future employers this website. Do you REALLY want to put that into the project?" }),
-    createComment({ user_id: joanathan.id, review_id: review2.id, content: "Based" }),
-    createComment({ user_id: jesse.id, review_id: review3.id, content: "Same here, vanilla is such an underated flavor" }),
-    createComment({ user_id: karl.id, review_id: review4.id, content: "I feel sad whenever I drink diet anything. Either drink soda or don't" })
-  ]);
 
   app.listen(port, () => console.log(`listening on port ${port}`));
 };

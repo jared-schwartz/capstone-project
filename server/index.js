@@ -33,7 +33,7 @@ app.get("/api/flavors", async (res, req, next) => {
   }
 });
 
-app.post("./api/reviews", async (req, res, next) => {
+app.post("/api/reviews", async (req, res, next) => {
   try {
     const { user_id, flavor_id, content, score } = req.body;
 
@@ -47,7 +47,7 @@ app.post("./api/reviews", async (req, res, next) => {
   }
 });
 
-app.post("./api/user", async (req, res, next) => {
+app.post("/api/register", async (req, res, next) => {
   try {
     const {} = req.body;
     createUser({username: alt, password: pw, photo_URL: ""});

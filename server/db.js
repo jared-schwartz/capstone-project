@@ -16,7 +16,8 @@ const createTables = async () => {
         username VARCHAR(20) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT now(),
-        photo_URL VARCHAR(255)
+        photo_URL VARCHAR(255),
+        is_Admin BOOLEAN DEFAULT false
         );
 
     CREATE TABLE flavors(
@@ -59,7 +60,7 @@ const seedData = async () => {
   createFlavor({ name: "Dr Pepper Original (Real Sugar)",description: "good", photo_URL: "https://m.media-amazon.com/images/I/61kw9c37qRL.jpg" })
 };
 
-const createUser = async ({ username, password, photo_URL }) => {
+const createUser = async ({ username, password }) => {
   const SQL = `
       INSERT INTO users(username, password, photo_URL) VALUES($1, $2, $3) RETURNING *
     `;
@@ -81,14 +82,13 @@ const createFlavor = async ({ name, description, photo_URL }) => {
   return response.rows[0];
 };
 
-const createReview = async ({ id, user_id, flavor_id, content, score }) => {
+const createReview = async ({ user_id, flavor_id, content, score }) => {
   const SQL = `
-    INSERT INTO reviews (id, user_id, flavor_id, content, score) 
-    VALUES ($1, $2, $3, $4, $5) 
+    INSERT INTO reviews (user_id, flavor_id, content, score) 
+    VALUES ($1, $2, $3, $4) 
     RETURNING *`;
 
   const response = await client.query(SQL, [
-    id,
     user_id, 
     flavor_id, 
     content, 
@@ -113,9 +113,6 @@ const fetchFlavors = async () => {
   const response = await client.query(SQL);
   return response.rows;
 };
-
-
-
 
 module.exports = {
   client,

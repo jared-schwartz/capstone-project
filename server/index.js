@@ -9,6 +9,8 @@ const {
   seedData
 } = require("./db");
 
+const bcrypt = require("bcrypt");
+
 const express = require("express");
 
 const app = express();
@@ -45,6 +47,29 @@ app.post("/api/review", async (req, res, next) => {
     res.status(201).json(newReview);
   } catch (ex) {
     next(ex);
+  }
+});
+
+
+app.post('/api/register', async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    createUser({username: username, password: password, photo_URL: ""});
+
+    res.status(201).json({
+      message: "User registered successfully"
+    });
+
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(400).json({ error: "Email already in use" });
+    }
+    next(error);
   }
 });
 

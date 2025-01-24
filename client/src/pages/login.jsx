@@ -17,6 +17,7 @@ async function loginUser(credentials) {
     }
 
     const result = await response.json();
+    console.log(result);
     return result.token;
   } catch (error) {
     console.error("Login error:", error.message);
@@ -35,7 +36,7 @@ function LoginForm({ setUser, setToken }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      navigate("/");
+      navigate("/login");
     }
   }, [navigate]);
 
@@ -88,7 +89,11 @@ function LoginForm({ setUser, setToken }) {
           />
         </label>
         <br />
+        <br />
         <button type="submit">Login</button>
+        <br />
+        <br />
+        <a href="./register"><b>Create An Account</b></a>
       </form>
     </div>
   );

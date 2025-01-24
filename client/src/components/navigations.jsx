@@ -8,8 +8,8 @@ export default function Navigation({ user }) {
       <div id="links">
       <Link to="/">Home</Link>
       <Link to="/flavors">Flavors</Link>
-      <Link to="/reviews">Reviews</Link>
       <Link to="/login">Login</Link>
+      <Link to="/register">Register</Link>
       </div>
     </nav>
   );

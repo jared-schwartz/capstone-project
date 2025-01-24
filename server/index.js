@@ -22,7 +22,7 @@ app.get("/api/users", async (req, res, next) => {
     console.log("trying users");
     const users = await fetchUsers();
     console.log(users);
-    res.send(await fetchUsers());
+    res.send(users);
   } catch (ex) {
     console.log(ex);
     next(ex);
@@ -66,6 +66,10 @@ const init = async () => {
     createFlavor({ name: "Dr Pepper Cherry Vanilla",description: "good", photo_URL: "https://sweetkingdoms.com/wp-content/uploads/2023/11/DR-PEPPER-CHERRY-VANILLA.webp" }),
     createFlavor({ name: "Dr Pepper Cream Soda",description: "good", photo_URL: "https://i.ebayimg.com/images/g/3k4AAOSwSAFhKJAQ/s-l1200.jpg" }),
     createFlavor({ name: "Dr Pepper Original (Real Sugar)",description: "good", photo_URL: "https://m.media-amazon.com/images/I/61kw9c37qRL.jpg" }),
+    createFlavor({ name: "Dr Pepper Zero Sugar",description: "good", photo_URL: "https://i5.walmartimages.com/asr/99826e18-22e2-4042-aaa2-7607e3d4a5ca.95aa7add0df607e4a75cbf3fba435a24.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF" }),
+    createFlavor({ name: "Dr Pepper Zero Sugar Cream Soda",description: "good", photo_URL: "https://i5.walmartimages.com/asr/df4e75c2-7b42-48f6-b41b-cc263fc04fc2.741691a64738160dc574aa739f3e49ee.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF" }),
+    createFlavor({ name: "Dr Pepper Zero Sugar Strawberries & Cream",description: "good", photo_URL: "https://i5.walmartimages.com/asr/1bf5a211-609f-4724-b3d1-01034c647ae6.abf8a0672d8fd588064d9b7176f00cbf.jpeg" }),
+    createFlavor({ name: "Dr Pepper Zero Sugar Creamy Coconut",description: "good", photo_URL: "https://www.kroger.com/product/images/large/back/0007800003873" }),
   ]);
 
   app.listen(port, () => console.log(`listening on port ${port}`));

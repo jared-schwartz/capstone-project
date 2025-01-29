@@ -29,7 +29,7 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT now(),
         description VARCHAR(255),
         photo_URL VARCHAR(255),
-        average_Score REAL DEFAULT 0,
+        average_Score REAL DEFAULT 5,
         disabled BOOLEAN DEFAULT false
         );
     CREATE TABLE reviews(

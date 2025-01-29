@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 
 async function loginUser(credentials) {
   try {
@@ -18,37 +17,28 @@ async function loginUser(credentials) {
     }
 
     const result = await response.json();
-    return result.token; 
+    console.log(result);
+    return result.token;
   } catch (error) {
     console.error("Login error:", error.message);
     return null;
   }
 }
 
-async function selectUser() {
-  try {
-    const response = await fetch ("/api/users",{
-      method: "GET",
-    });
-    const result = await response.json();
-    console.log(result);
-  } catch (error) {
-    console.error("It didnt work...", error);
-  }
-}
-
-
-
-
-
-
-
-function Login({ setUser, setToken }) {
-  const navigate = useNavigate();
+function LoginForm({ setUser, setToken }) {
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,13 +51,11 @@ function Login({ setUser, setToken }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = await loginUser(credentials);
-
     if (token) {
-      setToken(token); 
-      setUser({ username: credentials.username }); 
-      navigate("/"); 
-    } else {
-      alert("Login failed. Please check your credentials and try again.");
+      setToken(token);
+      setUser(credentials.username);
+      localStorage.setItem("token", token);
+      navigate("/");
     }
   };
 
@@ -101,11 +89,14 @@ function Login({ setUser, setToken }) {
           />
         </label>
         <br />
+        <br />
         <button type="submit">Login</button>
+        <br />
+        <br />
+        <a href="./register"><b>Create An Account</b></a>
       </form>
     </div>
   );
 }
 
-export default Login;
- 
+export default LoginForm;

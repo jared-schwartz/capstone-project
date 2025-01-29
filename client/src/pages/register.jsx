@@ -6,10 +6,12 @@ export default function Register({user, setUser, token, setToken}){
 
     return (
         <>
-        <h1>Register</h1>
-        <form id="">
-            
-        </form>
+        <div id="register-form">
+            <form id="form">
+                <h3>Register User</h3>
+            </form>
+        </div>
+
         </>
     )
 }

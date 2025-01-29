@@ -70,6 +70,13 @@ const init = async () => {
     createFlavor({ name: "Dr Pepper Zero Sugar Cream Soda",description: "good", photo_URL: "https://i5.walmartimages.com/asr/df4e75c2-7b42-48f6-b41b-cc263fc04fc2.741691a64738160dc574aa739f3e49ee.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF" }),
     createFlavor({ name: "Dr Pepper Zero Sugar Strawberries & Cream",description: "good", photo_URL: "https://i5.walmartimages.com/asr/1bf5a211-609f-4724-b3d1-01034c647ae6.abf8a0672d8fd588064d9b7176f00cbf.jpeg" }),
     createFlavor({ name: "Dr Pepper Zero Sugar Creamy Coconut",description: "good", photo_URL: "https://www.kroger.com/product/images/large/back/0007800003873" }),
+    createFlavor({ name: "Diet Cherry Vanilla Dr Pepper",description: "good", photo_URL: "https://www.kroger.com/product/images/large/right/0007800008916" }),
+    createFlavor({ name: "Dr Pepper Caffeine Free",description: "good", photo_URL: "https://i5.walmartimages.com/asr/64ba3b05-a891-4760-a95f-13dd04c8e750.6bd4fcfff89f2b81de25b8dfb6401ee7.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF" }),
+    createFlavor({ name: "Diet Dr Pepper Caffeine Free",description: "good", photo_URL: "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcRo5BHtgzIgfs5FTyIQfREk1w8sSmuZJtAm80J9huvYRAm0hRCtb_dAsmMP8lNJEVg-VbK_DCcqRh9Fy9Z1dtYtnnJObODcfQ" }),
+    createFlavor({ name: "Dr Pepper Fantastic Chocolate",description: "good", photo_URL: "https://i0.wp.com/www.theimpulsivebuy.com/wordpress/wp-content/uploads/2021/08/fanchocpepp.jpeg?resize=600%2C600&ssl=1" }),
+    createFlavor({ name: "Diet Dr Pepper Cherry Chocolate",description: "good", photo_URL: "https://simferopol.e-sweets.ru/wa-data/public/shop/products/66/02/266/images/251/251.970.jpg" }),
+    createFlavor({ name: "Dr Pepper Berries & Cream",description: "good", photo_URL: "https://hips.hearstapps.com/hmg-prod/images/dr-pepper-berries-and-cream-flavored-soda-1644933954.jpg?resize=1024:*" }),
+    createFlavor({ name: "Heritage Dr Pepper",description: "good", photo_URL: "https://candyfunhouse.ca/cdn/shop/files/dr-pepper-made-with-sugar-candy-funhouse.jpg?v=1695756241" }),
   ]);
 
   app.listen(port, () => console.log(`listening on port ${port}`));

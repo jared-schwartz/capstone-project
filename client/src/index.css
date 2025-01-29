@@ -22,6 +22,12 @@ body {
   text-decoration: underline;
 }
 
+#sort-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
 
 #login-form {
   text-align: center;

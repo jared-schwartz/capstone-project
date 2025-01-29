@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Review from "../components/reviews";
 
 const testFlavor = {
@@ -40,9 +40,10 @@ const testReviews = [
     }
 ]
 
-export default function FlavorDetails({ user, setUser, token, setToken }) {
+export default function FlavorDetails({ user, token }) {
     const [reviews, setReviews] = useState(testReviews)
     const [userReview, setUserReview] = useState()
+    const { flavor_id } = useParams();
 
 
     useEffect(() => {
@@ -70,6 +71,7 @@ export default function FlavorDetails({ user, setUser, token, setToken }) {
             <div class="split-view">
                 <div>
                     <p>{testFlavor.name}</p>
+                    <p>ID: {flavor_id}</p>
                     <img src={testFlavor.photo_url} />
                 </div>
                 <div>

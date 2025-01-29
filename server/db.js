@@ -2,7 +2,8 @@ const { client } = require("./server.js");
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const JWT = process.env.JWT || "shhh";
+require("dotenv").config();
+
 
 const createTables = async () => {
   const SQL = `  
@@ -60,7 +61,7 @@ const seedData = async () => {
   createFlavor({ name: "Dr Pepper Original (Real Sugar)",description: "good", photo_URL: "https://m.media-amazon.com/images/I/61kw9c37qRL.jpg" })
 };
 
-const createUser = async ({ username, password }) => {
+const createUser = async ({ username, password, photo_URL }) => {
   const SQL = `
       INSERT INTO users(username, password, photo_URL) VALUES($1, $2, $3) RETURNING *
     `;
@@ -71,6 +72,17 @@ const createUser = async ({ username, password }) => {
   ]);
   return response.rows[0];
 };
+
+const generateToken = (user) => {
+  const payload = {
+    user_id: user.id,
+    username: user.username,
+  };
+  const options = { expiresIn: "1h" };
+  return jwt.sign(payload, process.env.JWT_SECRET, options);
+};
+
+
 
 const createFlavor = async ({ name, description, photo_URL }) => {
   const SQL = `
@@ -116,6 +128,7 @@ const fetchFlavors = async () => {
 
 module.exports = {
   client,
+  generateToken,
   createTables,
   createUser,
   fetchUsers,

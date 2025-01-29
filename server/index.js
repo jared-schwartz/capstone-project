@@ -6,6 +6,7 @@ const {
   createFlavor,
   fetchFlavors,
   createReview,
+  generateToken,
   seedData
 } = require("./db");
 
@@ -50,6 +51,34 @@ app.post("/api/review", async (req, res, next) => {
   }
 });
 
+app.post("/api/login", async (req, res, next) => {
+  try {
+    const {username, password} = req.body;
+
+    if (!username || !password){
+      return res.status(400).json({error: "All fields are required"});
+    }
+    const userQuery = "SELECT * FROM users WHERE username = $1";
+    const userResult = await client.query(userQuery, [username]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(401).json({error: "Invalid credentials"});
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    
+    if (!isMatch) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const token = generateToken(user);
+
+    res.status(200).json({ token, user: { id: user.id, username: user.username } });
+  }
+  catch (ex) {
+    next(ex);
+  }
+})
 
 app.post('/api/register', async (req, res, next) => {
   try {
@@ -66,9 +95,6 @@ app.post('/api/register', async (req, res, next) => {
     });
 
   } catch (error) {
-    if (error.code === '23505') {
-      return res.status(400).json({ error: "Email already in use" });
-    }
     next(error);
   }
 });

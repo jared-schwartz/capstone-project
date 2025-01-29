@@ -6,7 +6,7 @@ const {
   createFlavor,
   fetchFlavors,
   createReview,
-  seedData
+  seedData,
 } = require("./db");
 
 const express = require("express");
@@ -41,13 +41,17 @@ app.post("/api/review", async (req, res, next) => {
     if (!user_id || !flavor_id || !content || !score) {
       return res.status(400).json({ error: "All fields are required" });
     }
-    const newReview = await createReview({ user_id, flavor_id, content, score });
+    const newReview = await createReview({
+      user_id,
+      flavor_id,
+      content,
+      score,
+    });
     res.status(201).json(newReview);
   } catch (ex) {
     next(ex);
   }
 });
-
 
 const init = async () => {
   const port = process.env.PORT || 3000;

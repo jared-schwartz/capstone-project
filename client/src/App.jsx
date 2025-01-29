@@ -10,8 +10,8 @@ import Register from "./pages/register";
 
 
 function App() {
-  const [user, setUser] = useState(null); // User state
-  const [token, setToken] = useState(null); // Token state
+  const [user, setUser] = useState(null); 
+  const [token, setToken] = useState(null); 
 
   return (
     <>
@@ -24,7 +24,7 @@ function App() {
           <Route path="/flavors" element={<Flavors />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register setUser={setUser} setToken={setToken}/>} />
         </Routes>
       </div>
     </>

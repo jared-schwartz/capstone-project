@@ -1,32 +1,84 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Register({user, setUser, token, setToken}){
+export default function Register({ user, setUser, token, setToken }) {
     const navigate = useNavigate();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
+
+    async function handleCreateUser(credentials) {
+        try {
+            const response = await fetch("/api/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(credentials),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Registration Failed");
+            }
+
+            const result = await response.json();
+            console.log("Registration successful:", result);
+            setToken(result.token);
+            setUser(result.user);
+            navigate("/"); 
+        } catch (error) {
+            console.error("Registration error:", error.message);
+            setError(error.message);
+        }
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        if (password.length < 8) {
+            setError("Password must be at least 8 characters long.");
+            return;
+        }
+        handleCreateUser({ username, password });
+    }
 
     return (
-        <>
         <div id="register-form">
-            <form id="form">
-                <h3>Register User</h3>
+            <form id="form" onSubmit={handleSubmit}>
+                <h1><u>Register User</u></h1>
+
+                {error && <p style={{ color: "red" }}>{error}</p>} {}
+                
                 <label>Username:</label>
-                    <input 
+                <br />
+                <input 
+                    placeholder="johndoe123"
                     required
                     name="username"
-                    value={credentials.username}
                     type="text"
-                    />
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+                <br /><br />
+                
                 <label>Password:</label>
+                <br />
                 <input 
+                    placeholder="********"
                     required
                     name="password"
-                    value={credentials.password}
-                    type="text"
-                    />
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <br /><br />
+                
                 <button type="submit">Create Account</button>
+                <br /><br />
+                
+                <a href="./login"><b>Already have an account? Login Here</b></a>
+                <p>*Password must be at least 8 characters.*</p>
             </form>
         </div>
-
-        </>
-    )
+    );
 }

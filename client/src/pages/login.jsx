@@ -69,18 +69,21 @@ function LoginForm({ setUser, setToken }) {
           Username:
           <br />
           <input
+            placeholder="johndoe123"
             required
             name="username"
             value={credentials.username}
             type="text"
             onChange={handleChange}
           />
+                    <br />
         </label>
         <br />
         <label>
           Password:
           <br />
           <input
+            placeholder="********"
             required
             name="password"
             value={credentials.password}

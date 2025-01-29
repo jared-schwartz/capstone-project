@@ -7,6 +7,7 @@ const {
   fetchFlavors,
   createReview,
   seedData,
+  generateToken,
 } = require("./db");
 
 const express = require("express");
@@ -63,6 +64,8 @@ const init = async () => {
   await createTables();
 
   await seedData();
+
+  await generateToken();
 
   app.listen(port, () => console.log(`listening on port ${port}`));
 };

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Flavors() {
   const [flavors, setFlavors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [nameSortOrder, setNameSortOrder] = useState("asc");
   const [scoreSortOrder, setScoreSortOrder] = useState("asc");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +51,10 @@ export default function Flavors() {
     setNameSortOrder(null); 
   };
 
+  const handleFlavorClick = (flavor_id) => {
+    navigate(`/flavors/${flavor_id}`);
+};
+
   return (
     <div id="flavors-page">
       <h1><b>Dr Pepper Flavors</b></h1>
@@ -74,7 +80,7 @@ export default function Flavors() {
       <ul id="flavors-catalog">
         {filteredAndSortedFlavors.length > 0 ? (
           filteredAndSortedFlavors.map((flavor) => (
-            <li key={flavor.id}>
+            <li key={flavor.id} onClick={() => handleFlavorClick(flavor.id)}>
               <img src={flavor.photo_url} alt={flavor.name} width="200px" />
               <br />
               <br />

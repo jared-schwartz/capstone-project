@@ -6,12 +6,14 @@ import Flavors from "./pages/flavors";
 import Reviews from "./pages/reviews";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import FlavorDetails from "./pages/flavorDetails";
 
 
 
 function App() {
   const [user, setUser] = useState(null); // User state
   const [token, setToken] = useState(null); // Token state
+  const [flavor, setFlavor] = useState(null)
 
   return (
     <>
@@ -25,6 +27,7 @@ function App() {
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/flavors/:flavor_id" element={<FlavorDetails />} />
         </Routes>
       </div>
     </>

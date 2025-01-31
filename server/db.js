@@ -84,6 +84,16 @@ const fetchUsers = async () => {
   return response.rows;
 };
 
+const fetchUserById = async (id) => {
+  const SQL = `
+    SELECT * FROM users
+    WHERE id = $1
+    ;
+    `;
+  const response = await client.query(SQL, [id]);
+  return response.rows[0];
+};
+
 const fetchFlavors = async () => {
   const SQL = `
     SELECT * FROM flavors;
@@ -99,4 +109,5 @@ module.exports = {
   fetchUsers,
   createFlavor,
   fetchFlavors,
+  fetchUserById,
 };

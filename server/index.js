@@ -6,6 +6,7 @@ const {
   createFlavor,
   fetchFlavors,
   fetchUserById,
+  fetchSingleFlavor,
 } = require("./db");
 
 const express = require("express");
@@ -42,6 +43,19 @@ app.get("/api/users/:id", async (req, res, next) => {
     const user = await fetchUserById(id);
     console.log(user);
     res.send(user);
+  } catch (ex) {
+    console.log(ex);
+    next(ex);
+  }
+});
+
+app.get("/api/flavors/:id", async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    console.log("trying flavor");
+    const flavor = await fetchSingleFlavor(id);
+    console.log(flavor);
+    res.send(flavor);
   } catch (ex) {
     console.log(ex);
     next(ex);

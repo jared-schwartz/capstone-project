@@ -1,4 +1,7 @@
-const { client } = require("./server")
+const pg = require("pg");
+const client = new pg.Client(
+  process.env.DATABASE_URL || "postgres://localhost/drPepper_db"
+);
 
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");

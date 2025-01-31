@@ -13,7 +13,6 @@ import FlavorDetails from "./pages/flavorDetails";
 function App() {
   const [user, setUser] = useState(null); // User state
   const [token, setToken] = useState(null); // Token state
-  const [flavor, setFlavor] = useState(null)
 
   return (
     <>

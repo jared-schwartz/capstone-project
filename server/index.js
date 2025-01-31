@@ -48,6 +48,7 @@ app.post('/api/users', async (req, res, next) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
+
     createUser({ username: username, password: password, photo_URL: "" });
 
     res.status(201).json({

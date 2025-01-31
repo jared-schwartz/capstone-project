@@ -26,7 +26,7 @@ export default function Register({ user, setUser, token, setToken }) {
             console.log("Registration successful:", result);
             setToken(result.token);
             setUser(result.user);
-            navigate("/"); 
+            navigate("/login"); 
         } catch (error) {
             console.error("Registration error:", error.message);
             setError(error.message);
@@ -39,6 +39,7 @@ export default function Register({ user, setUser, token, setToken }) {
             setError("Password must be at least 8 characters long.");
             return;
         }
+        setError(null); // Clear any existing errors before submitting
         handleCreateUser({ username, password });
     }
 
@@ -47,7 +48,7 @@ export default function Register({ user, setUser, token, setToken }) {
             <form id="form" onSubmit={handleSubmit}>
                 <h1><u>Register User</u></h1>
 
-                {error && <p style={{ color: "red" }}>{error}</p>} {}
+                {error && <p style={{ color: "red" }}>{error}</p>}
                 
                 <label>Username:</label>
                 <br />
@@ -57,7 +58,10 @@ export default function Register({ user, setUser, token, setToken }) {
                     name="username"
                     type="text"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => {
+                        setUsername(e.target.value);
+                        setError(null); // Reset error on input change
+                    }}
                 />
                 <br /><br />
                 
@@ -69,7 +73,10 @@ export default function Register({ user, setUser, token, setToken }) {
                     name="password"
                     type="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                        setError(null); // Reset error on input change
+                    }}
                 />
                 <br /><br />
                 

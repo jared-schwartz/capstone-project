@@ -24,8 +24,8 @@ function App() {
           <Route path="/" element={<Home user={user} token={token} />} />
           <Route path="/flavors" element={<Flavors />} />
           <Route path="/reviews" element={<Reviews />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login setUser={setUser} setToken={setToken} />} />
+          <Route path="/register" element={<Register setUser={setUser} setToken={setToken} />} />
           <Route path="/flavors/:flavor_id" element={<FlavorDetails />} />
         </Routes>
       </div>

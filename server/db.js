@@ -99,6 +99,16 @@ const fetchFlavors = async () => {
   return response.rows;
 };
 
+const fetchSingleFlavor = async (id) => {
+  const SQL = `
+    SELECT * FROM flavors
+    WHERE id = $1
+    ;
+    `;
+  const response = await client.query(SQL, [id]);
+  return response.rows[0];
+};
+
 module.exports = {
   client,
   createTables,
@@ -107,4 +117,5 @@ module.exports = {
   createFlavor,
   fetchFlavors,
   fetchUserById,
+  fetchSingleFlavor,
 };

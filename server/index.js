@@ -130,7 +130,7 @@ const init = async () => {
   await seedData();
   console.log("Tables created");
 
-  app.listen(port, () => console.log(Listening on port ${port}));
+  app.listen(port, () => console.log(`Listening on port ${port}`));
 };
 
 init();

@@ -1,4 +1,7 @@
-const { client } = require("./server")
+const pg = require("pg");
+const client = new pg.Client(
+  process.env.DATABASE_URL || "postgres://localhost/drPepper_db"
+);
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -187,16 +190,6 @@ const fetchUsers = async () => {
   return response.rows;
 };
 
-const fetchUserById = async (id) => {
-  const SQL = `
-    SELECT * FROM users
-    WHERE id = $1
-    ;
-    `;
-  const response = await client.query(SQL, [id]);
-  return response.rows[0];
-};
-
 const selectUserById = async (id) => {
   try {
     const SQL = `SELECT id, username, photo_URL, created_at, is_admin FROM users WHERE id = $1`;
@@ -218,16 +211,6 @@ const fetchFlavors = async () => {
     `;
   const response = await client.query(SQL);
   return response.rows;
-};
-
-const fetchSingleFlavor = async (id) => {
-  const SQL = `
-    SELECT * FROM flavors
-    WHERE id = $1
-    ;
-    `;
-  const response = await client.query(SQL, [id]);
-  return response.rows[0];
 };
 
 
@@ -252,10 +235,7 @@ module.exports = {
   fetchUsers,
   createFlavor,
   fetchFlavors,
-  fetchSingleFlavor,
   generateToken,
   seedData,
   selectUserById
 };
-
-

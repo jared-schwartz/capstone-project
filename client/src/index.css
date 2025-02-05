@@ -26,6 +26,15 @@ body {
   font-weight:bold;
 }
 
+#account-page {
+  
+}
+
+#account-page h1 {
+  text-align: center;
+}
+
+
 #login-form a {
   text-align: center;
   color: white;

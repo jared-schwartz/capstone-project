@@ -25,14 +25,14 @@ export default function Review({ review, editing = false, editable = false, onSu
                             content: e.target.value,
                         }))}
                         value={tempReview.content} />
-                    <button onClick={() => { setEdit(false) }}>Sumbit</button>
+                    <button onClick={() => { setEdit(false) }}>Submit</button>
                 </form>
 
             ) : (
                 <>
                     <p>{review.username} gave {review.flavor} a {review.score}/5</p >
                     <p>{review.content}</p>
-                    {editable && <button onClick={() => { setEdit(true) }}>edit</button>}
+                    {editable && <button onClick={() => { setEdit(true) }}>Edit</button>}
                 </>
             )
             }

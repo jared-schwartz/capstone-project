@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 async function loginUser(credentials) {
   try {
-    const response = await fetch("/api/users", {
+    const response = await fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -17,8 +17,8 @@ async function loginUser(credentials) {
     }
 
     const result = await response.json();
-    console.log(result);
-    return result.token;
+    //console.log(result);
+    return result;
   } catch (error) {
     console.error("Login error:", error.message);
     return null;
@@ -52,10 +52,10 @@ function LoginForm({ setUser, setToken }) {
     e.preventDefault();
     const token = await loginUser(credentials);
     if (token) {
-      setToken(token);
-      setUser(credentials.username);
-      localStorage.setItem("token", token);
-      navigate("/");
+      setToken(token.token);
+      setUser(token.user);
+      localStorage.setItem("token", token.token);
+      navigate("/account");
     }
   };
 

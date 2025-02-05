@@ -57,10 +57,10 @@ export default function FlavorDetails({ user, token }) {
             if (foundReview) {
                 setUserReview(foundReview); // Save user's review
                 setReviews(reviews.filter((review) => review.username !== name)); // Filter out the user's review
-                console.log("Found the review!", foundReview)
+              //  console.log("Found the review!", foundReview)
             } else {
                 setReviews(reviews);
-                console.log("Did not find the review!")
+             //   console.log("Did not find the review!")
             }
         }
     }, [])

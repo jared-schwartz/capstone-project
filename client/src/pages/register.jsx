@@ -7,7 +7,28 @@ export default function Register({ user, setUser, token, setToken }) {
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
 
+    async function isUsernameTaken(username) {
+        try {
+            const response = await fetch ("/api/users");
+            const users = await response.json();
+
+            return users.some(user => user.username === username);
+        } catch (error) {
+            console.error("Error Fetching Users:", error);
+            return true;
+        }
+    }
+
+
+
+
+
+
     async function handleCreateUser(credentials) {
+        if (await isUsernameTaken(credentials.username)){
+            setError("Username already taken, please choose another one.");
+            return;
+        }
         try {
             const response = await fetch("/api/users", {
                 method: "POST",

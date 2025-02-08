@@ -8,7 +8,8 @@ const {
   fetchFlavors,
   createReview,
   generateToken,
-  seedData
+  seedData,
+  selectFlavorById
 } = require("./db");
 
 const bcrypt = require("bcrypt");
@@ -39,13 +40,12 @@ app.get("/api/user/:id", async (req, res, next) => {
     const user = await selectUserById(req.params.id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
-    }
+    }s
     res.json(user);
   } catch (error) {
     next(error);
   }
 });
-
 // Fetch all flavors 
 app.get("/api/flavors", async (req, res, next) => {
   try {
@@ -53,6 +53,16 @@ app.get("/api/flavors", async (req, res, next) => {
     res.json(flavors);
   } catch (ex) {
     next(ex);
+  }
+});
+
+app.get("/api/flavor/:id", async (req, res, next) => {
+  try {
+    console.log("Flavor ID:", req.params.id);
+    const flavor = await selectFlavorById(req.params.id);
+    res.json(flavor);
+  } catch (error) {
+    next(error);
   }
 });
 

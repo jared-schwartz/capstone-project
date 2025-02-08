@@ -1,12 +1,12 @@
 const pg = require("pg");
-const client = new pg.Client(
-  process.env.DATABASE_URL || "postgres://localhost/drPepper_db"
-);
-
+const client = new pg.Client({
+  user: "postgres",
+  password: "root",
+  port: 5432,
+});
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT = process.env.JWT || "shhh";
-const uuid = require("uuid");
 
 const createTables = async () => {
   const SQL = `  
@@ -16,7 +16,7 @@ const createTables = async () => {
   DROP TABLE IF EXISTS flavors;
 
     CREATE TABLE users(
-        id UUID PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         username VARCHAR(20) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT now(),
@@ -25,7 +25,7 @@ const createTables = async () => {
         );
 
     CREATE TABLE flavors(
-        id UUID PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         name VARCHAR(50) UNIQUE NOT NULL,
         created_at TIMESTAMP DEFAULT now(),
         description VARCHAR(255),
@@ -34,16 +34,16 @@ const createTables = async () => {
         disabled BOOLEAN DEFAULT false
         );
     CREATE TABLE reviews(
-        id UUID PRIMARY KEY,
-        user_id UUID REFERENCES users(id) NOT NULL,
-        flavor_id UUID REFERENCES flavors(id) NOT NULL,
+        id SERIAL PRIMARY KEY,
+        user_id SERIAL REFERENCES users(id) NOT NULL,
+        flavor_id SERIAL REFERENCES flavors(id) NOT NULL,
         content VARCHAR(500),
         score INTEGER
         );
     CREATE TABLE comments(
-        id UUID PRIMARY KEY,
-        user_id UUID REFERENCES users(id) NOT NULL,
-        flavor_id UUID REFERENCES flavors(id) NOT NULL,
+        id SERIAL PRIMARY KEY,
+        user_id SERIAL REFERENCES users(id) NOT NULL,
+        flavor_id SERIAL REFERENCES flavors(id) NOT NULL,
         content VARCHAR(500) NOT NULL
         );
     `;
@@ -157,10 +157,9 @@ const seedData = async () => {
 
 const createUser = async ({ username, password, photo_URL }) => {
   const SQL = `
-      INSERT INTO users(id, username, password, photo_URL) VALUES($1, $2, $3, $4) RETURNING *
+      INSERT INTO users(username, password, photo_URL) VALUES($1, $2, $3) RETURNING *
     `;
   const response = await client.query(SQL, [
-    uuid.v4(),
     username,
     await bcrypt.hash(password, 5),
     photo_URL,
@@ -170,10 +169,9 @@ const createUser = async ({ username, password, photo_URL }) => {
 
 const createFlavor = async ({ name, description, photo_URL }) => {
   const SQL = `
-        INSERT INTO flavors(id, name, description, photo_URL) VALUES($1, $2, $3, $4) RETURNING *
+        INSERT INTO flavors(name, description, photo_URL) VALUES($1, $2, $3) RETURNING *
       `;
   const response = await client.query(SQL, [
-    uuid.v4(),
     name,
     description,
     photo_URL,
@@ -213,7 +211,20 @@ const fetchFlavors = async () => {
   return response.rows;
 };
 
+const selectFlavorById = async (id) => {
+  try {
+    const SQL = `SELECT id, name, description, photo_URL, average_Score FROM flavors WHERE id = $1`;
+    const response = await client.query(SQL, [id]);
 
+    if (response.rows.length === 0) {
+      return null;
+    }
+
+    return response.rows[0];
+  } catch (error) {
+    throw new Error(`Error fetching flavor: ${error.message}`);
+  }
+};
 
 const generateToken = (user) => {
   const payload = {
@@ -237,5 +248,6 @@ module.exports = {
   fetchFlavors,
   generateToken,
   seedData,
-  selectUserById
+  selectUserById,
+  selectFlavorById
 };

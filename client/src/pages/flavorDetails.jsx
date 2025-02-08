@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Review from "../components/reviews";
 
-const testFlavor = {
+const flavor = {
     name: "Original Doctor Pepper",
     description: "It's the sweetest one you'll ever taste in your life!!!",
     score: 5,
@@ -13,28 +13,26 @@ const testReviews = [
     {
         id: 1,
         username: "Jessie",
-        flavor: testFlavor.name,
+        flavor: flavor.name,
         score: 5,
         content: "Wow it's so good. Dr. pepper is the best!"
     },
     {
         id: 2,
         username: "Jared",
-        flavor: testFlavor.name,
         score: 5,
         content: "Wow it's so good. Dr. pepper is the best!"
     },
     {
         id: 3,
         username: "Karl",
-        flavor: testFlavor.name,
+        flavor: flavor.name,
         score: 5,
         content: "Wow it's so good. Dr. pepper is the best!"
     },
     {
         id: 4,
         username: "Johnathan",
-        flavor: testFlavor.name,
         score: 5,
         content: "Wow it's so good. Dr. pepper is the best!"
     }
@@ -42,70 +40,68 @@ const testReviews = [
 
 export default function FlavorDetails({ user, token }) {
     const [reviews, setReviews] = useState(testReviews)
+    const [flavor, setFlavor] = useState();
     const [userReview, setUserReview] = useState()
     const { flavor_id } = useParams();
 
 
     useEffect(() => {
-        //Get the current user's id
-        const name = "Karl"
-
-
-        if (name) {
-            // Check if the user has already posted a review
-            const foundReview = reviews.find((review) => review.username === name);
-            if (foundReview) {
-                setUserReview(foundReview); // Save user's review
-                setReviews(reviews.filter((review) => review.username !== name)); // Filter out the user's review
-              //  console.log("Found the review!", foundReview)
-            } else {
-                setReviews(reviews);
-             //   console.log("Did not find the review!")
+        const fetchFlavor = async () => {
+            try{
+                const response = await fetch(`/api/flavor/${flavor_id}`, {
+                    headers: {"Content-Type": "application/json"}   } );
+                if (!response.ok) throw new Error("Failed to fetch")
+                const data = await response.json();
+            console.log(data);
+            setFlavor(data);
             }
+        catch (ex) {
+            throw new Error("empty  ");
         }
+        }
+        fetchFlavor();
     }, [])
 
 
     return (
         <div id="flavorsDetailsPage">
-            <div class="split-view">
-                <div>
-                    <p>{testFlavor.name}</p>
+            <div className="split-view">
+                    {flavor ? (
+                    <div>
+                    <p>{flavor.name}</p>
                     <p>ID: {flavor_id}</p>
-                    <img src={testFlavor.photo_url} />
+                    <img src={flavor.photo_url} alt={flavor.name} />
+                    <p>{flavor.description}</p>
+                    <p>Average Rating: {flavor.average_Score}</p>
+                    </div>
+                ) : (
+                    <p>Loading</p>
+                )}
                 </div>
-                <div>
-                    <p>{testFlavor.description}</p>
-                    <p>Average Rating: {testFlavor.score}</p>
-                </div>
-            </div>
             <div id="reviews-and-comments">
-                {reviews ? (
+                {reviews.length > 0 ? (
                     <>
-                        {console.log(reviews)}
                         {userReview ? (
                             <>
-                                {console.log("Have the review!", userReview)}
                                 <p>See your review</p>
                                 <Review review={userReview} editable={true} edit={false} />
                                 {reviews.map((review) => (
-                                    <Review review={review} />
+                                    <Review key={review.id} review={review} />
                                 ))}
                             </>
                         ) : (
                             <>
-                                {console.log("Don't have the review")}
                                 <Review editing={true} review={{ score: 0.0, content: "" }} editable={true} />
                                 {reviews.map((review) => (
-                                    <Review review={review} />
+                                    <Review key={review.id} review={review} />
                                 ))}
                             </>
-                        )
-
-                        }
+                        )}
                     </>
-                ) : <p>Sorry, no reviews were found</p>}
+                ) : (
+                    <p>Sorry, no reviews were found</p>
+                )}
             </div>
         </div>
-    )
+    );
 }

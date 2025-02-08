@@ -129,3 +129,7 @@ margin-right: 20%;
   color: white;
   text-decoration: underline;
 }
+
+#flavorsDetailsPage img { 
+  max-width: 500px;
+}

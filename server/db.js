@@ -151,7 +151,12 @@ const seedData = async () => {
   };
 
 
-
+// Fetch User by Username
+const selectUserByUsername = async (username) => {
+  const SQL = `SELECT * FROM users WHERE username = $1`;
+  const response = await client.query(SQL, [username]);
+  return response.rows[0];
+};
 
 
 
@@ -232,6 +237,7 @@ const generateToken = (user) => {
   const payload = {
     user_id: user.id,
     username: user.username,
+    is_admin: user.is_admin,
   };
   const options = { expiresIn: "1h" };
   const secret = process.env.JWT_SECRET || "default_secret"; 
@@ -251,5 +257,6 @@ module.exports = {
   generateToken,
   seedData,
   selectUserById,
-  selectFlavorById
+  selectFlavorById,
+  selectUserByUsername
 };

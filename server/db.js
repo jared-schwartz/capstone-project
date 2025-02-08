@@ -56,6 +56,7 @@ const seedData = async () => {
   await createUser({ username: "karl", password: "k", photo_URL: "", is_admin: true });
   await createUser({ username: "joanathan", password: "j", photo_URL: "", is_admin: true });
 
+  
   await createFlavor({ 
     name: "Dr Pepper Original", 
     description: "Original 23 flavor blend.", 
@@ -167,6 +168,14 @@ const createUser = async ({ username, password, photo_URL }) => {
   return response.rows[0];
 };
 
+const createReview = async ({user_id, flavor_id, content, score}) => {
+  const SQL = `INSERT INTO reviews(user_id, flavor_id, content, score) VALUES($1, $2, $3, $4)`
+  const response = await(client.query(SQL), [
+    user_id, flavor_id, content, score
+  ]);
+  return response.rows[0];
+};
+
 const createFlavor = async ({ name, description, photo_URL }) => {
   const SQL = `
         INSERT INTO flavors(name, description, photo_URL) VALUES($1, $2, $3) RETURNING *
@@ -209,21 +218,6 @@ const fetchFlavors = async () => {
     `;
   const response = await client.query(SQL);
   return response.rows;
-};
-
-const selectFlavorById = async (id) => {
-  try {
-    const SQL = `SELECT id, name, description, photo_URL, average_Score FROM flavors WHERE id = $1`;
-    const response = await client.query(SQL, [id]);
-
-    if (response.rows.length === 0) {
-      return null;
-    }
-
-    return response.rows[0];
-  } catch (error) {
-    throw new Error(`Error fetching flavor: ${error.message}`);
-  }
 };
 
 const selectFlavorById = async (id) => {

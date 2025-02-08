@@ -211,7 +211,20 @@ const fetchFlavors = async () => {
   return response.rows;
 };
 
+const selectFlavorById = async (id) => {
+  try {
+    const SQL = `SELECT id, name, description, photo_URL, average_Score FROM flavors WHERE id = $1`;
+    const response = await client.query(SQL, [id]);
 
+    if (response.rows.length === 0) {
+      return null;
+    }
+
+    return response.rows[0];
+  } catch (error) {
+    throw new Error(`Error fetching flavor: ${error.message}`);
+  }
+};
 
 const selectFlavorById = async (id) => {
   try {

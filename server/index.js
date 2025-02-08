@@ -9,13 +9,13 @@ const {
   createReview,
   generateToken,
   seedData,
-  selectFlavorById
+  selectFlavorById,
+  selectUserByUsername
 } = require("./db");
 
 const bcrypt = require("bcrypt");
 const express = require("express");
 const path = require("path");
-const uuid = require("uuid");
 
 const app = express();
 app.use(express.json());
@@ -40,7 +40,7 @@ app.get("/api/user/:id", async (req, res, next) => {
     const user = await selectUserById(req.params.id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
-    }s
+    }
     res.json(user);
   } catch (error) {
     next(error);
@@ -84,28 +84,31 @@ app.post("/api/review", async (req, res, next) => {
 });
 
 // User login
+
 app.post("/api/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
-
     if (!username || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-
-    createUser({ username: username, password: password, photo_URL: "" });
-
-    res.status(201).json({
-      message: "User registered successfully"
-    });
-
-  } catch (error) {
-    if (error.code === "23505") {
-      return res.status(400).json({ error: "Username already in use" });
+    const user = await selectUserByUsername(username);
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
     }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const token = generateToken(user.id);
+    res.json({ token, user });
+  } catch (error) {
     next(error);
   }
 });
+
 
 app.post("/api/users", async (req, res, next) => {
   try {
@@ -144,20 +147,4 @@ const init = async () => {
 };
 
 init();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

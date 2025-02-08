@@ -50,7 +50,6 @@ export default function Account({ user, setUser, setToken }) {
     localStorage.removeItem("token"); 
     navigate("/"); 
   };
-
   if (loading) {
     return <div>Loading...</div>; 
   }
@@ -58,8 +57,9 @@ export default function Account({ user, setUser, setToken }) {
   if (error) {
     return <div>Error: {error}</div>; 
   }
-
-  console.log(userData);
+ 
+  
+  //console.log(userData);
 
   return (
     <div id="account-page">
@@ -67,11 +67,16 @@ export default function Account({ user, setUser, setToken }) {
       
       {userData ? (
         <div>
-          <h2>Welcome, {userData.username}</h2>
+          <h2><u>Welcome, {userData.username}</u></h2>
 
           <p>Username: {userData.username}</p>
           <p>Admin: {userData.is_admin ? "True" : "False"}</p>
-          <button onClick={handleLogout}>Log Out</button>
+          <button  onClick={handleLogout}>Log Out</button>
+          <br/>
+          <br/>
+          {userData.is_admin && (
+            <button onClick={() => navigate ("/admin")}>Admin Panel</button>
+          )}
         </div>
       ) : (
         <div>Loading user data...</div> 

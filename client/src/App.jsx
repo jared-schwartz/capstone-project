@@ -8,6 +8,7 @@ import Login from "./pages/login";
 import Register from "./pages/register";
 import FlavorDetails from "./pages/flavorDetails";
 import Account from "./pages/account";
+import Admin from "./pages/admin";
 
 function App() {
  
@@ -15,9 +16,9 @@ function App() {
   const storedToken = localStorage.getItem("token");
 
  
-  const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : null);
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  //  
+  //   storedUser ? JSON.parse(storedUser) : 
   
   useEffect(() => {
     if (user) {
@@ -43,6 +44,7 @@ function App() {
           <Route path="/register" element={<Register setUser={setUser} setToken={setToken} />} />
           <Route path="/flavors/:flavor_id" element={<FlavorDetails />} />
           <Route path="/account" element={<Account user={user} setUser={setUser} setToken={setToken} />} />
+          <Route path="/admin" element={<Admin user={user} setUser={setUser} setToken={setToken} />} />
         </Routes>
       </div>
     </>

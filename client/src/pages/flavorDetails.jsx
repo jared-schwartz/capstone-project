@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Review from "../components/reviews";
+import { FetchFlavor } from "../components/FetchFlavor";
 
 const flavor = {
     name: "Original Doctor Pepper",
@@ -42,8 +43,12 @@ export default function FlavorDetails({ user, token }) {
     const [reviews, setReviews] = useState(testReviews)
     const [flavor, setFlavor] = useState();
     const [userReview, setUserReview] = useState()
+    const [flavorData, setFlavorData] = useState( {} )
     const { flavor_id } = useParams();
+    let params = useParams();
 
+
+  
 
     useEffect(() => {
         const fetchFlavor = async () => {

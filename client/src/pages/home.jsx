@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Home({ user, setUser, token, setToken }) {
   const navigate = useNavigate();
-  
+  ;
 
   return (
     <>
@@ -15,6 +15,7 @@ export default function Home({ user, setUser, token, setToken }) {
           alt="Dr Pepper"/>
 
       <h3>Highest Rated Flavor:</h3>
+
       </div>
     </>
   );

@@ -60,7 +60,7 @@ export default function Register({ user, setUser, token, setToken }) {
             setError("Password must be at least 8 characters long.");
             return;
         }
-        setError(null); // Clear any existing errors before submitting
+        setError(null); 
         handleCreateUser({ username, password });
     }
 
@@ -81,7 +81,7 @@ export default function Register({ user, setUser, token, setToken }) {
                     value={username}
                     onChange={(e) => {
                         setUsername(e.target.value);
-                        setError(null); // Reset error on input change
+                        setError(null); 
                     }}
                 />
                 <br /><br />
@@ -96,7 +96,7 @@ export default function Register({ user, setUser, token, setToken }) {
                     value={password}
                     onChange={(e) => {
                         setPassword(e.target.value);
-                        setError(null); // Reset error on input change
+                        setError(null); 
                     }}
                 />
                 <br /><br />

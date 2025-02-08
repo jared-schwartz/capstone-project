@@ -160,14 +160,15 @@ const selectUserByUsername = async (username) => {
 
 
 
-const createUser = async ({ username, password, photo_URL }) => {
+const createUser = async ({ username, password, photo_URL, is_admin }) => {
   const SQL = `
-      INSERT INTO users(username, password, photo_URL) VALUES($1, $2, $3) RETURNING *
+      INSERT INTO users(username, password, photo_URL, is_admin) VALUES($1, $2, $3, $4) RETURNING *
     `;
   const response = await client.query(SQL, [
     username,
     await bcrypt.hash(password, 5),
     photo_URL,
+    is_admin
   ]);
   return response.rows[0];
 };

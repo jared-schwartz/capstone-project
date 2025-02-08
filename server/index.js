@@ -10,7 +10,9 @@ const {
   generateToken,
   seedData,
   selectFlavorById,
-  selectUserByUsername
+  selectUserByUsername,
+
+  getReviewsByFlavor,
 } = require("./db");
 
 const bcrypt = require("bcrypt");
@@ -21,10 +23,15 @@ const app = express();
 app.use(express.json());
 
 // Serve frontend
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "../client/dist/index.html")));
-app.use("/assets", express.static(path.join(__dirname, "../client/dist/assets")));
+app.get("/", (req, res) =>
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"))
+);
+app.use(
+  "/assets",
+  express.static(path.join(__dirname, "../client/dist/assets"))
+);
 
-// Fetch all users 
+// Fetch all users
 app.get("/api/users", async (req, res, next) => {
   try {
     const users = await fetchUsers();
@@ -46,7 +53,19 @@ app.get("/api/user/:id", async (req, res, next) => {
     next(error);
   }
 });
-// Fetch all flavors 
+
+//Fetch single flavor
+
+app.get("/api/flavor/:id", async (req, res, next) => {
+  try {
+    console.log("Flavor ID:", req.params.id);
+    const flavor = await selectFlavorById(req.params.id);
+    res.json(flavor);
+  } catch (error) {
+    next(error);
+  }
+});
+// Fetch all flavors
 app.get("/api/flavors", async (req, res, next) => {
   try {
     const flavors = await fetchFlavors();
@@ -66,6 +85,25 @@ app.get("/api/flavor/:id", async (req, res, next) => {
   }
 });
 
+app.get("/api/flavor/:id", async (req, res, next) => {
+  try {
+    console.log("Flavor ID:", req.params.id);
+    const flavor = await selectFlavorById(req.params.id);
+    res.json(flavor);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Fetch Reviews for Flavor
+app.get("/api/reviews/:id", async (req, res, next) => {
+  try {
+    const review = await getReviewsByFlavor(req.params.id);
+    res.json(review);
+  } catch (error) {
+    next(ex);
+  }
+});
 
 // Post a review
 app.post("/api/review", async (req, res, next) => {
@@ -76,7 +114,12 @@ app.post("/api/review", async (req, res, next) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const newReview = await createReview({ user_id, flavor_id, content, score });
+    const newReview = await createReview({
+      user_id,
+      flavor_id,
+      content,
+      score,
+    });
     res.status(201).json(newReview);
   } catch (ex) {
     next(ex);
@@ -104,11 +147,16 @@ app.post("/api/login", async (req, res, next) => {
 
     const token = generateToken(user.id);
     res.json({ token, user });
+
+    createUser({ username: username, password: password, photo_URL: "" });
+
+    res.status(201).json({
+      message: "User registered successfully",
+    });
   } catch (error) {
     next(error);
   }
 });
-
 
 app.post("/api/users", async (req, res, next) => {
   try {
@@ -129,10 +177,6 @@ app.post("/api/users", async (req, res, next) => {
   }
 });
 
-
-
-
-
 const init = async () => {
   const port = process.env.PORT || 3000;
 
@@ -147,4 +191,3 @@ const init = async () => {
 };
 
 init();
-

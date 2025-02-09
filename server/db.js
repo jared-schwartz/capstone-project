@@ -35,12 +35,9 @@ CREATE TABLE reviews(
     user_id INT REFERENCES users(id) NOT NULL,
     flavor_id INT REFERENCES flavors(id) NOT NULL,
     content VARCHAR(500),
-    score INTEGER
+    score INTEGER,
+    UNIQUE (user_id, flavor_id)
 );
-
-SELECT reviews.content, users.username 
-FROM reviews 
-INNER JOIN users ON reviews.user_id = users.id;
         
     CREATE TABLE comments(
         id SERIAL PRIMARY KEY,
@@ -76,6 +73,12 @@ const seedData = async () => {
     password: "j",
     photo_URL: "",
     is_admin: true,
+  });
+  await createUser({
+    username: "karlbusse242",
+    password: "password",
+    photo_URL: "",
+    is_admin: false,
   });
 
   await createFlavor({
@@ -227,6 +230,12 @@ const seedData = async () => {
     content: "very good",
     score: 5,
   });
+  await createReview({
+    user_id: 2,
+    flavor_id: 1,
+    content: "very good",
+    score: 5,
+  });
 };
 const selectUserByUsername = async (username) => {
   const SQL = `SELECT * FROM users WHERE username = $1`;
@@ -256,7 +265,11 @@ const createFlavor = async ({ name, description, photo_URL }) => {
 };
 const createReview = async ({ user_id, flavor_id, content, score }) => {
   const SQL = `
-        INSERT INTO reviews(user_id, flavor_id, content, score) VALUES($1, $2, $3, $4) RETURNING *
+        INSERT INTO reviews(user_id, flavor_id, content, score)
+        VALUES($1, $2, $3, $4)
+        ON CONFLICT (user_id, flavor_id)
+        DO UPDATE SET content = EXCLUDED.content, score = EXCLUDED.score
+        RETURNING *
       `;
   const response = await client.query(SQL, [
     user_id,
@@ -330,7 +343,7 @@ const generateToken = (user) => {
 
 const getReviewsByFlavor = async (flavor_id) => {
   try {
-    const SQL = `SELECT reviews.user_id, reviews.content, reviews.score,
+    const SQL = `SELECT reviews.user_id, reviews.flavor_id, reviews.content, reviews.score,
     users.username, flavors.name as flavor
     FROM reviews
     INNER JOIN users ON reviews.user_id = users.id
@@ -346,8 +359,14 @@ const getReviewsByFlavor = async (flavor_id) => {
 
 const authenticate = async (token, id) => {
   try {
-    console.log(token)
-    const payload = await jwt.verify(token, "default_secret");
+    if (!token || !token.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized: No token provided" });
+    }
+
+    const splitToken = token.split(" ")[1]
+
+    console.log(splitToken)
+    const payload = await jwt.verify(splitToken, "default_secret");
     if (payload.user_id != id) throw Error("Token does not match id")
     return payload
   } catch (ex) {

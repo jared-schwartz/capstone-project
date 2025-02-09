@@ -112,12 +112,7 @@ app.get("/api/authorize", async (req, res, next) => {
     const token = req.headers.authorization;
     const id = req.body.id
 
-    if (!token || !token.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Unauthorized: No token provided" });
-    }
-
-
-    const response = await authenticate(token.split(" ")[1], id)
+    const response = await authenticate(token, id)
 
     res.json({ "authorized?": response })
 
@@ -134,10 +129,12 @@ app.post("/api/reviews", async (req, res, next) => {
     const token = req.headers.authorization;
 
 
+
+
     if (!user_id || !flavor_id || !content || !score) {
       return res.status(400).json({ error: "All fields are required" });
     }
-    const authorized = await authenticate({ token, user_id });
+    const authorized = await authenticate(token, user_id);
 
     if (!authorized) { res.status(401).json({ error: "Invalid Token" }) }
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-export default function Review({ review, token, editing = false, editable = false }) {
+export default function Comment({ comment, token, editing = false, editable = false }) {
     const [edit, setEdit] = useState(editing)
-    const [tempReview, setTempReview] = useState(review)
-    const [thisReview, setThisReview] = useState(review)
+    const [tempComment, setTempComment] = useState(comment)
+    const [thisComment, setThisComment] = useState(comment)
 
     useEffect(() => {
         console.log(review)
@@ -13,26 +13,25 @@ export default function Review({ review, token, editing = false, editable = fals
         event.preventDefault()
 
         try {
-            console.log(tempReview)
+            console.log(tempComment)
 
-            const response = await fetch("/api/reviews", {
+            const response = await fetch("/api/comments", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    "user_id": tempReview.user_id,
-                    "flavor_id": tempReview.flavor_id,
-                    "content": tempReview.content,
-                    "score": tempReview.score
+                    "user_id": tempComment.user_id,
+                    "review_id": tempComment.flavor_id,
+                    "content": tempComment.content,
                 })
             });
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
             const data = await response.json();
             console.log("Success:", data);
-            setThisReview(data)
+            setThisComment(data)
             setEdit(false)
 
         } catch (ex) {
@@ -48,26 +47,26 @@ export default function Review({ review, token, editing = false, editable = fals
                 <form onSubmit={onSubmit}>
                     <input
                         placeholder="Enter a score out of 5"
-                        onChange={(e) => setTempReview((prevReview) => ({
+                        onChange={(e) => setTempComment((prevReview) => ({
                             ...prevReview,
                             score: e.target.value,
                         }))}
-                        value={tempReview.score} />
+                        value={tempComment.score} />
                     <input
                         placeholder="Write a review!"
-                        onChange={(e) => setTempReview((prevReview) => ({
+                        onChange={(e) => setTempComment((prevReview) => ({
                             ...prevReview,
                             content: e.target.value,
                         }))}
-                        value={tempReview.content} />
+                        value={tempComment.content} />
                     <button
                         type="submit">Submit</button>
                 </form>
 
             ) : (
                 <>
-                    <p>{thisReview.username} gave {thisReview.flavor} a {thisReview.score}/5</p >
-                    <p>{thisReview.content}</p>
+                    <p>{thisComment.username} gave {thisComment.flavor} a {thisComment.score}/5</p >
+                    <p>{thisComment.content}</p>
                     {editable && <button onClick={() => { setEdit(true) }}>Edit</button>}
                 </>
             )

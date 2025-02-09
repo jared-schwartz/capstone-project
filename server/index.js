@@ -11,7 +11,7 @@ const {
   seedData,
   selectFlavorById,
   selectUserByUsername,
-
+  authenticate,
   getReviewsByFlavor,
 } = require("./db");
 
@@ -65,6 +65,7 @@ app.get("/api/flavor/:id", async (req, res, next) => {
     next(error);
   }
 });
+
 // Fetch all flavors
 app.get("/api/flavors", async (req, res, next) => {
   try {
@@ -105,26 +106,54 @@ app.get("/api/reviews/:id", async (req, res, next) => {
   }
 });
 
+
+app.get("/api/authorize", async (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+    const id = req.body.id
+
+    if (!token || !token.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized: No token provided" });
+    }
+
+
+    const response = await authenticate(token.split(" ")[1], id)
+
+    res.json({ "authorized?": response })
+
+  } catch (error) {
+    res.status(401).json({ error: "Invalid Token" })
+  }
+})
+
+
 // Post a review
-app.post("/api/review", async (req, res, next) => {
+app.post("/api/reviews", async (req, res, next) => {
   try {
     const { user_id, flavor_id, content, score } = req.body;
+    const token = req.headers.authorization;
+
 
     if (!user_id || !flavor_id || !content || !score) {
       return res.status(400).json({ error: "All fields are required" });
     }
+    const authorized = await authenticate({ token, user_id });
+
+    if (!authorized) { res.status(401).json({ error: "Invalid Token" }) }
 
     const newReview = await createReview({
       user_id,
       flavor_id,
       content,
-      score,
+      score
     });
     res.status(201).json(newReview);
   } catch (ex) {
     next(ex);
   }
 });
+
+
 
 // User login
 
@@ -145,10 +174,8 @@ app.post("/api/login", async (req, res, next) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const token = generateToken(user.id);
+    const token = generateToken(user);
     res.json({ token, user });
-
-    createUser({ username: username, password: password, photo_URL: "" });
 
     res.status(201).json({
       message: "User registered successfully",

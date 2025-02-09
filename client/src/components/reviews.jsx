@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 
 export default function Review({ review, editing = false, editable = false, onSub }) {
     const [edit, setEdit] = useState(editing)
+    const [username, setUsername] = useState();
     const [tempReview, setTempReview] = useState({ score: review.score, content: review.content })
-
-
 
     return (
         <div>

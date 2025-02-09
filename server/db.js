@@ -1,7 +1,5 @@
-const pg = require("pg");
-const client = new pg.Client(
-  process.env.DATABASE_URL || "postgres://localhost/drPepper_db"
-);
+const { client } = require("./server")
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT = process.env.JWT || "shhh";
@@ -31,13 +29,19 @@ const createTables = async () => {
         average_Score REAL DEFAULT 5,
         disabled BOOLEAN DEFAULT false
         );
-    CREATE TABLE reviews(
-        id SERIAL PRIMARY KEY,
-        user_id SERIAL REFERENCES users(id) NOT NULL,
-        flavor_id SERIAL REFERENCES flavors(id) NOT NULL,
-        content VARCHAR(500),
-        score INTEGER
-        );
+
+CREATE TABLE reviews(
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) NOT NULL,
+    flavor_id INT REFERENCES flavors(id) NOT NULL,
+    content VARCHAR(500),
+    score INTEGER
+);
+
+SELECT reviews.content, users.username 
+FROM reviews 
+INNER JOIN users ON reviews.user_id = users.id;
+        
     CREATE TABLE comments(
         id SERIAL PRIMARY KEY,
         user_id SERIAL REFERENCES users(id) NOT NULL,
@@ -216,6 +220,13 @@ const seedData = async () => {
     content: "very good",
     score: 5,
   });
+
+  await createReview({
+    user_id: 2,
+    flavor_id: 1,
+    content: "very good",
+    score: 5,
+  });
 };
 const selectUserByUsername = async (username) => {
   const SQL = `SELECT * FROM users WHERE username = $1`;
@@ -312,19 +323,39 @@ const generateToken = (user) => {
   const options = { expiresIn: "1h" };
   const secret = process.env.JWT_SECRET || "default_secret";
 
+  console.log(payload)
+
   return jwt.sign(payload, secret, options);
 };
+
 const getReviewsByFlavor = async (flavor_id) => {
   try {
-    const SQL = `SELECT user_id, content, score FROM reviews
-                 WHERE flavor_id = $1`;
+    const SQL = `SELECT reviews.user_id, reviews.content, reviews.score,
+    users.username, flavors.name as flavor
+    FROM reviews
+    INNER JOIN users ON reviews.user_id = users.id
+    INNER JOIN flavors ON reviews.flavor_id = flavors.id
+    WHERE flavor_id = $1;`;
     const response = await client.query(SQL, [flavor_id]);
     if (response.rows.length === 0) {
       return null;
     }
-    return response.rows[0];
-  } catch (error) {}
+    return response.rows;
+  } catch (error) { }
 };
+
+const authenticate = async (token, id) => {
+  try {
+    console.log(token)
+    const payload = await jwt.verify(token, "default_secret");
+    if (payload.user_id != id) throw Error("Token does not match id")
+    return payload
+  } catch (ex) {
+    const error = Error("not authorized", ex.message);
+    error.status = 401;
+    throw error;
+  }
+}
 
 module.exports = {
   client,
@@ -340,4 +371,5 @@ module.exports = {
   getReviewsByFlavor,
   selectUserByUsername,
   createReview,
+  authenticate
 };

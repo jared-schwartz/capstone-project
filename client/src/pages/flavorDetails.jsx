@@ -7,7 +7,7 @@ const singleFlavor = {
     name: "Jesse",
     description: "",
     score: "",
-    photo_url: "" 
+    photo_url: ""
 }
 
 const testReviews = [
@@ -42,51 +42,81 @@ const testReviews = [
 ]
 
 export default function FlavorDetails({ user, token }) {
-    const [reviews, setReviews] = useState(testReviews)
+    const [reviews, setReviews] = useState()
     const [flavor, setFlavor] = useState();
     const [userReview, setUserReview] = useState()
-    const [flavorData, setFlavorData] = useState( {} )
+    const [flavorData, setFlavorData] = useState({})
     const { flavor_id } = useParams();
     let params = useParams();
 
 
-  
+
 
     useEffect(() => {
         const fetchFlavor = async () => {
-            try{
+            try {
                 const response = await fetch(`/api/flavor/${flavor_id}`, {
-                    headers: {"Content-Type": "application/json"}   } );
+                    headers: { "Content-Type": "application/json" }
+                });
                 if (!response.ok) throw new Error("Failed to fetch")
                 const data = await response.json();
-            console.log(data);
-            setFlavor(data);
+                console.log(data);
+                setFlavor(data);
             }
-        catch (ex) {
-            throw new Error("empty  ");
+            catch (ex) {
+                throw new Error("empty  ");
+            }
         }
-        }
+        console.log(token, user, "Revealing Important information")
         fetchFlavor();
     }, [])
 
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const response = await fetch(`/api/reviews/${flavor_id}`, {
+                    headers: { "Content-Type": "application/json" }
+                });
+                if (!response.ok) throw new Error("Failed to fetch")
+                const data = await response.json();
+                console.log(data);
+                setReviews(data)
+
+            } catch (ex) {
+                throw new Error("empty ");
+
+            }
+        }
+        fetchReviews()
+    }, [])
+
+    useEffect(() => {
+        const auth = async () => {
+            try {
+
+            } catch (ex) {
+                throw new Error("empty")
+            }
+        }
+    }, [reviews])
 
     return (
         <div id="flavorsDetailsPage">
             <div className="split-view">
-                    {flavor ? (
+                {flavor ? (
                     <div>
-                    <p>{flavor.name}</p>
-                    <p>ID: {flavor_id}</p>
-                    <img src={flavor.photo_url} alt={flavor.name} />
-                    <p>{flavor.description}</p>
-                    <p>Average Rating: {flavor.average_Score}</p>
+                        <p>{flavor.name}</p>
+                        <p>ID: {flavor_id}</p>
+                        <img src={flavor.photo_url} alt={flavor.name} />
+                        <p>{flavor.description}</p>
+                        <p>Average Rating: {flavor.average_Score}</p>
                     </div>
                 ) : (
                     <p>Loading</p>
                 )}
-                </div>
+            </div>
             <div id="reviews-and-comments">
-                {reviews.length > 0 ? (
+                {reviews ? (
                     <>
                         {userReview ? (
                             <>
@@ -100,13 +130,13 @@ export default function FlavorDetails({ user, token }) {
                             <>
                                 <Review editing={true} review={{ score: 0.0, content: "" }} editable={true} />
                                 {reviews.map((review) => (
-                                    <Review key={review.id} review={review} />
+                                    <Review review={review} />
                                 ))}
                             </>
                         )}
                     </>
                 ) : (
-                    <p>Sorry, no reviews were found</p>
+                    <p>Sorry could not find the review</p>
                 )}
             </div>
         </div>

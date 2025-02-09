@@ -11,15 +11,15 @@ import Account from "./pages/account";
 import Admin from "./pages/admin";
 
 function App() {
- 
+
   const storedUser = localStorage.getItem("user");
   const storedToken = localStorage.getItem("token");
 
- 
+
   const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : null);
   const [token, setToken] = useState(null);
   //     
-  
+
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -42,7 +42,7 @@ function App() {
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/login" element={<Login setUser={setUser} setToken={setToken} />} />
           <Route path="/register" element={<Register setUser={setUser} setToken={setToken} />} />
-          <Route path="/flavors/:flavor_id" element={<FlavorDetails />} />
+          <Route path="/flavors/:flavor_id" element={<FlavorDetails user={user} token={token} />} />
           <Route path="/account" element={<Account user={user} setUser={setUser} setToken={setToken} />} />
           <Route path="/admin" element={<Admin user={user} setUser={setUser} setToken={setToken} />} />
         </Routes>

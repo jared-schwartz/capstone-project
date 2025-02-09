@@ -9,7 +9,7 @@ export default function Register({ user, setUser, token, setToken }) {
 
     async function isUsernameTaken(username) {
         try {
-            const response = await fetch ("/api/users");
+            const response = await fetch("/api/users");
             const users = await response.json();
 
             return users.some(user => user.username === username);
@@ -19,13 +19,8 @@ export default function Register({ user, setUser, token, setToken }) {
         }
     }
 
-
-
-
-
-
     async function handleCreateUser(credentials) {
-        if (await isUsernameTaken(credentials.username)){
+        if (await isUsernameTaken(credentials.username)) {
             setError("Username already taken, please choose another one.");
             return;
         }
@@ -47,7 +42,7 @@ export default function Register({ user, setUser, token, setToken }) {
             console.log("Registration successful:", result);
             setToken(result.token);
             setUser(result.user);
-            navigate("/login"); 
+            navigate("/login");
         } catch (error) {
             console.error("Registration error:", error.message);
             setError(error.message);
@@ -60,7 +55,7 @@ export default function Register({ user, setUser, token, setToken }) {
             setError("Password must be at least 8 characters long.");
             return;
         }
-        setError(null); 
+        setError(null);
         handleCreateUser({ username, password });
     }
 
@@ -70,10 +65,10 @@ export default function Register({ user, setUser, token, setToken }) {
                 <h1><u>Register User</u></h1>
 
                 {error && <p style={{ color: "red" }}>{error}</p>}
-                
+
                 <label>Username:</label>
                 <br />
-                <input 
+                <input
                     placeholder="johndoe123"
                     required
                     name="username"
@@ -81,14 +76,14 @@ export default function Register({ user, setUser, token, setToken }) {
                     value={username}
                     onChange={(e) => {
                         setUsername(e.target.value);
-                        setError(null); 
+                        setError(null);
                     }}
                 />
                 <br /><br />
-                
+
                 <label>Password:</label>
                 <br />
-                <input 
+                <input
                     placeholder="********"
                     required
                     name="password"
@@ -96,14 +91,14 @@ export default function Register({ user, setUser, token, setToken }) {
                     value={password}
                     onChange={(e) => {
                         setPassword(e.target.value);
-                        setError(null); 
+                        setError(null);
                     }}
                 />
                 <br /><br />
-                
+
                 <button type="submit">Create Account</button>
                 <br /><br />
-                
+
                 <a href="./login"><b>Already have an account? Login Here</b></a>
                 <p>*Password must be at least 8 characters.*</p>
             </form>

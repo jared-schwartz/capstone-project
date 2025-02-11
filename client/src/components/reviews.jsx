@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useInsertionEffect } from "react";
 import Comment from "./comments";
 import { createPath } from "react-router-dom";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 export default function Review({ setRefresh, review, token, user, editing = false, editable = false }) {
     const [edit, setEdit] = useState(editing)
@@ -37,10 +39,30 @@ export default function Review({ setRefresh, review, token, user, editing = fals
         getComments();
     }, [review])
 
-    useEffect(() => {
-        console.log(tempReview)
-        console.log(token)
-    }, [tempReview])
+    async function onDelete() {
+        try {
+            const response = await fetch("/api/reviews", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    "user_id": user.id,
+                    "review_id": thisReview.id,
+                })
+
+            })
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+            setTempReview({ score: 1, content: "", user_id: user.id, flavor_id: review.flavor_id, username: user.username })
+
+            setEdit(true);
+
+        } catch (error) {
+            throw new Error("empty ")
+        }
+    }
 
     async function onSubmit(event) {
         event.preventDefault()
@@ -94,7 +116,7 @@ export default function Review({ setRefresh, review, token, user, editing = fals
                             />
                             <span>/5</span>
                         </div>
-                        <p className="username">by {user.username}</p>
+                        <p className="username">review by {user.username}</p>
                     </div>
 
                     <hr />
@@ -111,41 +133,58 @@ export default function Review({ setRefresh, review, token, user, editing = fals
                 </form>
             }
 
-            <div style={{ display: edit ? "none" : "block" }}>
-                <div className="review-header">
-                    <p>{thisReview.score}/5</p>
-                    <p className="username">by {review.username}</p>
+            {!edit &&
+                <div className={`revCom ${editable ? "own-review" : ""}`}>
+                    <div className="review-header">
+                        <div className="score-circle">
+                            <span className="score">{thisReview.score}</span>
+                            <span className="out-of">/5</span>
+                        </div>
+                        <p className="username">review by {review.username}</p>
+                    </div>
+
+                    <div className="review-content">
+                        <p>{thisReview.content}</p>
+                        {editable && (
+                            <div className="review-controls">
+                                <button className="edit-btn" onClick={() => setEdit(true)}>
+                                    <i className="fas fa-pencil-alt"></i>
+                                </button>
+                                <button className="delete-btn" onClick={onDelete}>
+                                    <i className="fas fa-trash" ></i>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <button className="toggle-comments-btn" onClick={() => setShowComments(!showComments)}>
+                        {showComments ? "Hide Comments" : `Show ${comments.length + (userComment && 1 || 0)} Comments`}
+                        <i className={`fas fa-chevron-${showComments ? "up" : "down"}`}></i>
+                    </button>
                 </div>
+            }
+            {showComments && (
+                <>
+                    {user && (
+                        <>
+                            {userComment ? (
+                                <Comment setRefresh={setRefresh} comment={userComment} token={token} reviewer={review.username} editable={true} />
+                            ) : (
+                                <Comment
+                                    setRefresh={setRefresh}
+                                    comment={{ user_id: user.id, review_id: review.id, username: user.username, content: "" }}
+                                    token={token} reviewer={review.username} editable={true} editing={true}
+                                />
+                            )}
+                        </>
+                    ) || <p>Login or Register to make comments!</p>}
+                    {
+                        comments.map((comment) => <Comment comment={comment} reviewer={review.username} />)
+                    }
+                    {comments.length < 1 && !userComment && <p>Nobody has commented here</p>}
+                </>
+            )}
 
-                <hr />
-
-                <p>{thisReview.content}</p>
-                {editable && <button onClick={() => setEdit(true)}>Edit</button>}
-                <button onClick={() => setShowComments(!showComments)}>
-                    {showComments ? "Hide" : `Show ${comments.length + (userComment && 1 || 0)}`} Comments
-                </button>
-                {showComments && (
-                    <>
-                        {user && (
-                            <>
-                                {userComment ? (
-                                    <Comment setRefresh={setRefresh} comment={userComment} token={token} reviewer={review.username} editable={true} />
-                                ) : (
-                                    <Comment
-                                        setRefresh={setRefresh}
-                                        comment={{ user_id: user.id, review_id: review.id, username: user.username, content: "" }}
-                                        token={token} reviewer={review.username} editable={true} editing={true}
-                                    />
-                                )}
-                            </>
-                        ) || <p>Login or Register to make comments!</p>}
-                        {
-                            comments.map((comment) => <Comment comment={comment} reviewer={review.username} />)
-                        }
-                        {comments.length < 1 && !userComment && <p>Nobody has commented here</p>}
-                    </>
-                )}
-            </div>
         </div>
 
     )

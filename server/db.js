@@ -1,6 +1,7 @@
 const { client } = require("./server")
 
 const bcrypt = require("bcrypt");
+const { response } = require("express");
 const jwt = require("jsonwebtoken");
 const JWT = process.env.JWT || "shhh";
 
@@ -410,7 +411,7 @@ const getReviewsByFlavor = async (id) => {
 
 const getComments = async (id) => {
   try {
-    const SQL = `SELECT comments.user_id, comments.review_id, comments.content,
+    const SQL = `SELECT comments.id, comments.user_id, comments.review_id, comments.content,
     users.username
     FROM comments
     INNER JOIN users ON comments.user_id = users.id
@@ -423,6 +424,38 @@ const getComments = async (id) => {
     return response.rows;
   } catch (error) { }
 };
+
+const deleteReview = async (review_id, user_id) => {
+  try {
+    const SQL = "DELETE FROM reviews WHERE id = $1 AND user_id = $2 RETURNING *"
+    const response = await client.query(SQL, [review_id, user_id]);
+
+    if (response.rowCount === 0) {
+      throw new Error("The review did not have the user id or does not exist ")
+    }
+
+    return "Success"
+
+  } catch (error) {
+    throw new Error(error.message)
+  }
+}
+
+const deleteComment = async (comment_id, user_id) => {
+  try {
+    const SQL = "DELETE FROM comments WHERE id = $1 AND user_id = $2 RETURNING *"
+    const response = await client.query(SQL, [comment_id, user_id]);
+
+    if (response.rowCount === 0) {
+      throw new Error("The comment's user did not match given user or does not exist ")
+    }
+
+    return "Success"
+
+  } catch (error) {
+    throw new Error(error.message)
+  }
+}
 
 const generateToken = (user) => {
   const payload = {
@@ -472,7 +505,10 @@ module.exports = {
   getReviewsByFlavor,
   selectUserByUsername,
   createReview,
+
   createComment,
+  deleteReview,
+  deleteComment,
   getComments,
   authenticate
 };

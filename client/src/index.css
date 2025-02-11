@@ -234,11 +234,14 @@ td {
   text-align: center;
 }
 
+/* Reviews and comments */
+
 #reviews-and-comments {
   background-color: #2c2e2d;
   margin: 4em;
   border-radius: 0.5em;
   padding-top: 1em;
+  padding-bottom: 1em;
 }
 
 #reviews-and-comments>div {
@@ -335,4 +338,89 @@ hr {
 .submit-btn:active {
   background-color: #890024;
   color: white;
+}
+
+.score-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 50%;
+  background-color: #2c2e2d;
+  border: 2px solid white;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.score {
+  font-size: 1.3em;
+}
+
+.out-of {
+  font-size: 0.8em;
+}
+
+.review-content {
+  background-color: #2c2e2d;
+  padding: 1em;
+  border: 1px solid white;
+  border-radius: 0.3em;
+  position: relative;
+}
+
+.own-review:hover .review-controls {
+  display: flex;
+}
+
+.review-controls {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  display: none;
+  gap: 0.5em;
+}
+
+.edit-btn,
+.delete-btn {
+  width: 2em;
+  height: 2em;
+  background-color: rgba(128, 128, 128, 0.7);
+  border: none;
+  border-radius: 0.3em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-btn i,
+.delete-btn i {
+  color: white;
+  font-size: 1em;
+}
+
+.toggle-comments-btn {
+  background: none;
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.5em;
+}
+
+.toggle-comments-btn:hover {
+  color: lightgray;
+}
+
+.comment-content {
+  background-color: #2c2e2d;
+  padding: 0.5em;
+  border: 1px solid white;
+  border-radius: 0.3em;
+  position: relative;
 }

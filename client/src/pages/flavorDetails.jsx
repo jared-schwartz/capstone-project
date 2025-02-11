@@ -90,7 +90,7 @@ export default function FlavorDetails({ user, token }) {
                             setRefresh={setRefresh}
                             editing={true}
                             user={user}
-                            review={{ score: 0.0, content: "", user_id: user.id, flavor_id: flavor.id, username: user.username }}
+                            review={{ score: 1, content: "", user_id: user.id, flavor_id: flavor.id, username: user.username }}
                             token={token}
                             editable={true}
                         />

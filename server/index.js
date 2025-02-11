@@ -14,6 +14,8 @@ const {
   selectUserByUsername,
   authenticate,
   getReviewsByFlavor,
+  deleteReview,
+  deleteComment,
   getComments,
   updateFlavorScore
 } = require("./db");
@@ -215,7 +217,6 @@ app.post("/api/comments", async (req, res, next) => {
 });
 
 
-
 // User login
 
 app.post("/api/login", async (req, res, next) => {
@@ -264,6 +265,54 @@ app.post("/api/users", async (req, res, next) => {
     next(error);
   }
 });
+
+app.delete("/api/reviews", async (req, res, next) => {
+  try {
+    const { user_id, review_id } = req.body;
+    const token = req.headers.authorization;
+
+    console.log(user_id, review_id, token)
+    if (!user_id || !review_id || !token) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const authorized = await authenticate(token, user_id);
+
+    if (!authorized) { res.status(401).json({ error: "Invalid Token" }) }
+
+    const response = await deleteReview(review_id, user_id)
+
+    res.status(201).json({ "response": response });
+
+  } catch (ex) {
+    next(ex);
+  }
+})
+
+app.delete("/api/comments", async (req, res, next) => {
+  try {
+    const { user_id, comment_id } = req.body;
+    const token = req.headers.authorization;
+
+    console.log(user_id, comment_id, token)
+    if (!user_id || !comment_id || !token) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const authorized = await authenticate(token, user_id);
+
+    if (!authorized) { res.status(401).json({ error: "Invalid Token" }) }
+
+    const response = await deleteComment(comment_id, user_id)
+
+    res.status(201).json({ "response": response });
+
+  } catch (ex) {
+    next(ex);
+  }
+})
+
+
 
 const init = async () => {
   const port = process.env.PORT || 3000;

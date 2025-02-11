@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useInsertionEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Comment from "./comments";
-import { createPath } from "react-router-dom";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
@@ -21,14 +20,12 @@ export default function Review({ setRefresh, review, token, user, editing = fals
                 if (!response.ok) throw new Error("Failed to fetch")
 
                 const data = await response.json();
-                console.log(data)
+
                 if (user && data.find((comment) => comment.user_id == user.id)) {
                     const userComExits = data.find((comment) => comment.user_id == user.id)
                     setUserComment(userComExits)
                     setComments(data.filter((comment) => comment.user_id !== user.id))
-                    console.log("User Comment:", userComment, "Other Comments:", comments)
                 } else if (data) {
-                    console.log("No user comment")
                     setComments(data)
                 }
             } catch (ex) {
@@ -86,7 +83,6 @@ export default function Review({ setRefresh, review, token, user, editing = fals
 
 
             const data = await response.json();
-            console.log("Success:", data);
             setRefresh(true)
             setThisReview(data)
             setEdit(false)

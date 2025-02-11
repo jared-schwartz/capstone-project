@@ -39,7 +39,6 @@ export default function Register({ user, setUser, token, setToken }) {
             }
 
             const result = await response.json();
-            console.log("Registration successful:", result);
             setToken(result.token);
             setUser(result.user);
             navigate("/login");

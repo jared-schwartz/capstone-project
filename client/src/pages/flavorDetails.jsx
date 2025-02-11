@@ -18,7 +18,6 @@ export default function FlavorDetails({ user, token }) {
                 });
                 if (!response.ok) throw new Error("Failed to fetch")
                 const data = await response.json();
-                console.log(data);
                 setFlavor(data);
             }
             catch (ex) {
@@ -29,8 +28,6 @@ export default function FlavorDetails({ user, token }) {
     }, [refresh, user])
 
     useEffect(() => {
-        console.log(user);
-
         const fetchReviews = async () => {
             try {
                 const response = await fetch(`/api/flavors/reviews/${flavor_id}`, {
@@ -49,7 +46,7 @@ export default function FlavorDetails({ user, token }) {
                     setReviews(data)
                 }
             } catch (ex) {
-                console.error("Error fetching reviews:", ex);
+                throw new Error("empty ")
             }
         };
 
@@ -81,7 +78,6 @@ export default function FlavorDetails({ user, token }) {
                 {user && flavor && <>
                     {userReview ? (
                         <>
-                            {console.log("User review found!")}
                             <Review setRefresh={setRefresh} user={user} review={userReview} token={token} editable={true} edit={false} />
                         </>
                     ) : (

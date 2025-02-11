@@ -6,8 +6,6 @@ export default function Comment({ setRefresh, comment, token, editing = false, e
     const [tempComment, setTempComment] = useState(comment)
     const [thisComment, setThisComment] = useState(comment)
 
-    useEffect(() => { console.log(thisComment) }, [thisComment])
-
     async function onDelete() {
         try {
             const response = await fetch("/api/comments", {
@@ -34,7 +32,6 @@ export default function Comment({ setRefresh, comment, token, editing = false, e
 
     async function onSubmit(event) {
         event.preventDefault()
-        console.log("Comment Token:", token, "Comment Data;", comment)
         try {
             const response = await fetch("/api/comments", {
                 method: "POST",
@@ -51,7 +48,6 @@ export default function Comment({ setRefresh, comment, token, editing = false, e
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
             const data = await response.json();
-            console.log("Success:", data);
             setThisComment({ ...data, username: tempComment.username })
             setRefresh(true)
             setEdit(false)

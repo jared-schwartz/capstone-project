@@ -42,8 +42,9 @@ CREATE TABLE reviews(
     CREATE TABLE comments(
         id SERIAL PRIMARY KEY,
         user_id SERIAL REFERENCES users(id) NOT NULL,
-        flavor_id SERIAL REFERENCES flavors(id) NOT NULL,
-        content VARCHAR(500) NOT NULL
+        review_id SERIAL REFERENCES reviews(id) NOT NULL,
+        content VARCHAR(500) NOT NULL,
+        UNIQUE (user_id, review_id)
         );
     `;
   await client.query(SQL);
@@ -233,10 +234,27 @@ const seedData = async () => {
   await createReview({
     user_id: 2,
     flavor_id: 1,
-    content: "very good",
-    score: 5,
+    content: "very very good",
+    score: 4,
+  });
+  await createReview({
+    user_id: 2,
+    flavor_id: 2,
+    content: "very very good",
+    score: 4,
+  });
+  await createComment({
+    user_id: 2,
+    review_id: 1,
+    content: "So true",
+  });
+  await createComment({
+    user_id: 4,
+    review_id: 1,
+    content: "Invalid opinion",
   });
 };
+
 const selectUserByUsername = async (username) => {
   const SQL = `SELECT * FROM users WHERE username = $1`;
   const response = await client.query(SQL, [username]);
@@ -263,6 +281,7 @@ const createFlavor = async ({ name, description, photo_URL }) => {
   const response = await client.query(SQL, [name, description, photo_URL]);
   return response.rows[0];
 };
+
 const createReview = async ({ user_id, flavor_id, content, score }) => {
   const SQL = `
         INSERT INTO reviews(user_id, flavor_id, content, score)
@@ -276,6 +295,22 @@ const createReview = async ({ user_id, flavor_id, content, score }) => {
     flavor_id,
     content,
     score,
+  ]);
+  return response.rows[0];
+};
+
+const createComment = async ({ user_id, review_id, content }) => {
+  const SQL = `
+        INSERT INTO comments(user_id, review_id, content)
+        VALUES($1, $2, $3)
+        ON CONFLICT (user_id, review_id)
+        DO UPDATE SET content = EXCLUDED.content
+        RETURNING *
+      `;
+  const response = await client.query(SQL, [
+    user_id,
+    review_id,
+    content,
   ]);
   return response.rows[0];
 };
@@ -327,6 +362,68 @@ const fetchFlavors = async () => {
   return response.rows;
 };
 
+const updateFlavorScore = async (flavor_id) => {
+  try {
+
+    const reviews = await getReviewsByFlavor(flavor_id)
+    const score = await (reviews.reduce((sum, cur) => {
+      return sum + cur.score
+    }, 0)) / reviews.length;
+
+    console.log(score);
+
+    if (typeof score !== "number" || score < 0 || score > 5) {
+      return res.status(400).json({ error: "Score must be a number between 0 and 5." });
+    }
+
+    const roundedScore = Math.round(score);
+
+    const sql = `
+      UPDATE flavors
+      SET average_Score = $1
+      WHERE id = $2
+      RETURNING average_Score;
+      `;
+
+    const result = await client.query(sql, [roundedScore, flavor_id]);
+    return result.rows[0].roundedScore;
+  } catch (ex) {
+    throw new Error(ex.message)
+  }
+};
+
+const getReviewsByFlavor = async (id) => {
+  try {
+    const SQL = `SELECT reviews.id, reviews.user_id, reviews.flavor_id, reviews.content, reviews.score,
+    users.username, flavors.name as flavor
+    FROM reviews
+    INNER JOIN users ON reviews.user_id = users.id
+    INNER JOIN flavors ON reviews.flavor_id = flavors.id
+    WHERE flavor_id = $1;`;
+    const response = await client.query(SQL, [id]);
+    if (response.rows.length === 0) {
+      return null;
+    }
+    return response.rows;
+  } catch (error) { }
+};
+
+const getComments = async (id) => {
+  try {
+    const SQL = `SELECT comments.user_id, comments.review_id, comments.content,
+    users.username
+    FROM comments
+    INNER JOIN users ON comments.user_id = users.id
+    INNER JOIN reviews ON comments.review_id = reviews.id
+    WHERE review_id = $1;`;
+    const response = await client.query(SQL, [id]);
+    if (response.rows.length === 0) {
+      return null;
+    }
+    return response.rows;
+  } catch (error) { }
+};
+
 const generateToken = (user) => {
   const payload = {
     user_id: user.id,
@@ -339,22 +436,6 @@ const generateToken = (user) => {
   console.log(payload)
 
   return jwt.sign(payload, secret, options);
-};
-
-const getReviewsByFlavor = async (flavor_id) => {
-  try {
-    const SQL = `SELECT reviews.user_id, reviews.flavor_id, reviews.content, reviews.score,
-    users.username, flavors.name as flavor
-    FROM reviews
-    INNER JOIN users ON reviews.user_id = users.id
-    INNER JOIN flavors ON reviews.flavor_id = flavors.id
-    WHERE flavor_id = $1;`;
-    const response = await client.query(SQL, [flavor_id]);
-    if (response.rows.length === 0) {
-      return null;
-    }
-    return response.rows;
-  } catch (error) { }
 };
 
 const authenticate = async (token, id) => {
@@ -387,8 +468,11 @@ module.exports = {
   seedData,
   selectUserById,
   selectFlavorById,
+  updateFlavorScore,
   getReviewsByFlavor,
   selectUserByUsername,
   createReview,
+  createComment,
+  getComments,
   authenticate
 };

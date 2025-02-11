@@ -17,7 +17,7 @@ function App() {
 
 
   const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : null);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(storedToken ? (storedToken) : null);
   //     
 
   useEffect(() => {

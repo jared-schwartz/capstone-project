@@ -38,15 +38,15 @@ export default function FlavorDetails({ user, token }) {
                 });
                 if (!response.ok) throw new Error("Failed to fetch");
 
-                const data = await response.json();
-                console.log(data);
 
-                if (user) {
-                    const userRevExists = data.find((review) => review.user_id == user.id);
-                    setUserReview(userRevExists || null); // Make sure it's either a review or null
-                    setReviews(data.filter((review) => review.user_id !== user.id));
+
+                const data = await response.json();
+
+                if (user && data.find((review) => review.user_id == user.id)) {
+                    setUserReview(data.find((review) => review.user_id == user.id))
+                    setReviews(data.filter((review) => review.user_id !== user.id))
                 } else {
-                    setReviews(data);
+                    setReviews(data)
                 }
             } catch (ex) {
                 console.error("Error fetching reviews:", ex);
@@ -55,50 +55,53 @@ export default function FlavorDetails({ user, token }) {
 
         fetchReviews();
         setRefresh(false);
-    }, [refresh, user]); // Added `user` as a dependency so it updates when user changes
+    }, []);
 
 
     return (
-        <div id="flavorsDetailsPage">
+        <div id="flavor-details">
             <div className="split-view">
                 {flavor ? (
-                    <div>
-                        <p>{flavor.name}</p>
-                        <p>ID: {flavor_id}</p>
-                        <img src={flavor.photo_url} alt={flavor.name} />
-                        <p>{flavor.description}</p>
-                        <p>Average Rating: {flavor.average_score}</p>
-                    </div>
+                    <>
+                        <div className="split-left">
+                            <img src={flavor.photo_url} alt={flavor.name} />
+                        </div>
+                        <div className="split-right">
+                            <h2>{flavor.name}</h2>
+                            <p>Description: {flavor.description}</p>
+                            <p>Average Rating: {flavor.average_score}</p>
+                        </div>
+                    </>
                 ) : (
                     <p>Loading</p>
                 )}
             </div>
             <div id="reviews-and-comments">
-
+                <h2>Reviews</h2>
                 {user && flavor && <>
-                    {console.log(userReview)}
                     {userReview ? (
-                        user && flavor && <Review setRefresh={setRefresh} review={userReview} token={token} editable={true} edit={false} />
+                        <>
+                            {console.log("User review found!")}
+                            <Review setRefresh={setRefresh} user={user} review={userReview} token={token} editable={true} edit={false} />
+                        </>
                     ) : (
-                        user && flavor && (
 
-                            <Review
-                                setRefresh={setRefresh}
-                                editing={true}
-                                user={user}
-                                review={{ score: 0.0, content: "", user_id: user.id, flavor_id: flavor.id, id: 0 }}
-                                token={token}
-                                editable={true}
-                            />
-                        )
+                        <Review
+                            setRefresh={setRefresh}
+                            editing={true}
+                            user={user}
+                            review={{ score: 0.0, content: "", user_id: user.id, flavor_id: flavor.id, username: user.username }}
+                            token={token}
+                            editable={true}
+                        />
+
                     )}
                 </> || <p>Login or register to create reviews!</p>}
 
-                <div style={{ display: reviews ? "block" : "none" }}>
-                    {reviews && reviews.map((review) => (
-                        <Review setRefresh={setRefresh} key={review.id} user={user} review={review} token={token} />
-                    ))}
-                </div>
+
+                {reviews && reviews.map((review) => (
+                    <Review setRefresh={setRefresh} key={review.id} user={user} review={review} token={token} />
+                ))}
 
                 <div style={{ display: reviews ? "none" : "block" }}>
                     <p>No Reviews</p>

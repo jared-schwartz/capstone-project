@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useInsertionEffect } from "react";
 import Comment from "./comments";
 import { createPath } from "react-router-dom";
 
@@ -37,6 +37,11 @@ export default function Review({ setRefresh, review, token, user, editing = fals
         getComments();
     }, [review])
 
+    useEffect(() => {
+        console.log(tempReview)
+        console.log(token)
+    }, [tempReview])
+
     async function onSubmit(event) {
         event.preventDefault()
         try {
@@ -48,13 +53,15 @@ export default function Review({ setRefresh, review, token, user, editing = fals
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    "user_id": tempReview.user_id,
-                    "flavor_id": tempReview.flavor_id,
+                    "user_id": user.id,
+                    "flavor_id": review.flavor_id,
                     "content": tempReview.content,
                     "score": tempReview.score
                 })
             });
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+
 
             const data = await response.json();
             console.log("Success:", data);
@@ -70,32 +77,48 @@ export default function Review({ setRefresh, review, token, user, editing = fals
 
     return (
         <div>
-            {/* Always mounted, but visibility controlled via display */}
-            <form
-                onSubmit={onSubmit}
-                style={{ display: edit ? "block" : "none" }}
-            >
-                <input
-                    placeholder="Enter a score out of 5"
-                    onChange={(e) => setTempReview((prevReview) => ({
-                        ...prevReview,
-                        score: e.target.value,
-                    }))}
-                    value={tempReview.score}
-                />
-                <input
-                    placeholder="Write a review!"
-                    onChange={(e) => setTempReview((prevReview) => ({
-                        ...prevReview,
-                        content: e.target.value,
-                    }))}
-                    value={tempReview.content}
-                />
-                <button type="submit">Submit</button>
-            </form>
+            {edit &&
+                <form
+                    onSubmit={onSubmit}
+                    className="revCom">
+                    <div className="review-header">
+                        <p>How good do you think this flavor is?</p>
+                        <div className="score-container">
+                            <input type="number" min="0" max="5" className="score-input"
+                                placeholder="Enter a score out of 5"
+                                onChange={(e) => setTempReview((prevReview) => ({
+                                    ...prevReview,
+                                    score: e.target.value,
+                                }))}
+                                value={tempReview.score}
+                            />
+                            <span>/5</span>
+                        </div>
+                        <p className="username">by {user.username}</p>
+                    </div>
+
+                    <hr />
+
+                    <textarea className="content-input" placeholder="Write your review here..."
+                        onChange={(e) => setTempReview((prevReview) => ({
+                            ...prevReview,
+                            content: e.target.value,
+                        }))}
+                        value={tempReview.content}
+                    ></textarea>
+
+                    <button type="submit" className="submit-btn">Submit</button>
+                </form>
+            }
 
             <div style={{ display: edit ? "none" : "block" }}>
-                <p>{thisReview.username} gave {thisReview.flavor} a {thisReview.score}/5</p>
+                <div className="review-header">
+                    <p>{thisReview.score}/5</p>
+                    <p className="username">by {review.username}</p>
+                </div>
+
+                <hr />
+
                 <p>{thisReview.content}</p>
                 {editable && <button onClick={() => setEdit(true)}>Edit</button>}
                 <button onClick={() => setShowComments(!showComments)}>

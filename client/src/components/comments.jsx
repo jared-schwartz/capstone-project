@@ -39,16 +39,19 @@ export default function Comment({ setRefresh, comment, token, reviewer, editing 
         <div>
             {edit ? (
 
-                <form onSubmit={onSubmit}>
-                    <input
+                <form
+                    onSubmit={onSubmit}
+                    className="revCom">
+                    <textarea className="content-input"
                         placeholder="Write a response!"
                         onChange={(e) => setTempComment((prevComment) => ({
                             ...prevComment,
                             content: e.target.value,
                         }))}
-                        value={tempComment.content} />
-                    <button
-                        type="submit">Submit</button>
+                        value={tempComment.content}
+                    ></textarea>
+
+                    <button type="submit" className="submit-btn">Submit</button>
                 </form>
             ) : (
                 <>

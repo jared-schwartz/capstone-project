@@ -190,9 +190,6 @@ const seedData = async () => {
     name: "Dr Pepper Blackberry Zero Sugar",
     description: "Brand new in 2025, blackberry flavor. Zero sugar version.", 
     photo_URL: "https://i5.walmartimages.com/asr/cb9b5b59-6b26-4e47-9803-4ebce46ace68.f21321c5acf7ccf6fc5bebe4418c275a.jpeg?odnHeight=2000&odnWidth=2000&odnBg=FFFFFF" });
-  
-
-
 
   await createReview({
     user_id: 1,

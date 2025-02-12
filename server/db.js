@@ -1,9 +1,11 @@
-const { client } = require("./server")
-
+const pg = require("pg");
+const client = new pg.Client(
+  process.env.DATABASE_URL || "postgres://localhost/drPepper_db");
 const bcrypt = require("bcrypt");
 const { response } = require("express");
 const jwt = require("jsonwebtoken");
 const JWT = process.env.JWT || "shhh";
+
 
 const createTables = async () => {
   const SQL = `  
@@ -177,104 +179,8 @@ const seedData = async () => {
     name: "Heritage Dr Pepper",
     description: "Dr. Pepper Heritage Soda is a classic soda with a unique flavor that's made with 23 signature flavors. It comes in a vintage-inspired bottle wrap. ", 
     photo_URL: "https://candyfunhouse.ca/cdn/shop/files/dr-pepper-made-with-sugar-candy-funhouse.jpg?v=1695756241" });
-  await createFlavor({ 
-    description: "good",
-    photo_URL:
-      "https://i5.walmartimages.com/asr/028be2fd-151e-4a7a-9438-c6d140e76001.4a9f1df900d85b116abb7b8cde88ed47.jpeg",
-  });
-  await createFlavor({
-    name: "Dr Pepper Creamy Coconut",
-    description: "good",
-    photo_URL: "https://www.kroger.com/product/images/large/back/0007800003871",
-  });
-  await createFlavor({
-    name: "Dr Pepper Dark Berry",
-    description: "good",
-    photo_URL:
-      "https://i5.walmartimages.com/asr/e663d659-1a5f-422e-94b7-1f5abd3c60fb.0358507f00c74fb01e767a15ea6fa417.jpeg",
-  });
-  await createFlavor({
-    name: "Dr Pepper Cherry Vanilla",
-    description: "good",
-    photo_URL:
-      "https://sweetkingdoms.com/wp-content/uploads/2023/11/DR-PEPPER-CHERRY-VANILLA.webp",
-  });
-  await createFlavor({
-    name: "Dr Pepper Cream Soda",
-    description: "good",
-    photo_URL: "https://i.ebayimg.com/images/g/3k4AAOSwSAFhKJAQ/s-l1200.jpg",
-  });
-  await createFlavor({
-    name: "Dr Pepper Original (Real Sugar)",
-    description: "good",
-    photo_URL: "https://m.media-amazon.com/images/I/61kw9c37qRL.jpg",
-  });
-  await createFlavor({
-    name: "Dr Pepper Zero Sugar",
-    description: "good",
-    photo_URL:
-      "https://i5.walmartimages.com/asr/99826e18-22e2-4042-aaa2-7607e3d4a5ca.95aa7add0df607e4a75cbf3fba435a24.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF",
-  });
-  await createFlavor({
-    name: "Dr Pepper Zero Sugar Cream Soda",
-    description: "good",
-    photo_URL:
-      "https://i5.walmartimages.com/asr/df4e75c2-7b42-48f6-b41b-cc263fc04fc2.741691a64738160dc574aa739f3e49ee.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF",
-  });
-  await createFlavor({
-    name: "Dr Pepper Zero Sugar Strawberries & Cream",
-    description: "good",
-    photo_URL:
-      "https://i5.walmartimages.com/asr/1bf5a211-609f-4724-b3d1-01034c647ae6.abf8a0672d8fd588064d9b7176f00cbf.jpeg",
-  });
-  await createFlavor({
-    name: "Dr Pepper Zero Sugar Creamy Coconut",
-    description: "good",
-    photo_URL: "https://www.kroger.com/product/images/large/back/0007800003873",
-  });
-  await createFlavor({
-    name: "Diet Cherry Vanilla Dr Pepper",
-    description: "good",
-    photo_URL:
-      "https://www.kroger.com/product/images/large/right/0007800008916",
-  });
-  await createFlavor({
-    name: "Dr Pepper Caffeine Free",
-    description: "good",
-    photo_URL:
-      "https://i5.walmartimages.com/asr/64ba3b05-a891-4760-a95f-13dd04c8e750.6bd4fcfff89f2b81de25b8dfb6401ee7.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF",
-  });
-  await createFlavor({
-    name: "Diet Dr Pepper Caffeine Free",
-    description: "good",
-    photo_URL:
-      "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcRo5BHtgzIgfs5FTyIQfREk1w8sSmuZJtAm80J9huvYRAm0hRCtb_dAsmMP8lNJEVg-VbK_DCcqRh9Fy9Z1dtYtnnJObODcfQ",
-  });
-  await createFlavor({
-    name: "Dr Pepper Fantastic Chocolate",
-    description: "good",
-    photo_URL:
-      "https://i0.wp.com/www.theimpulsivebuy.com/wordpress/wp-content/uploads/2021/08/fanchocpepp.jpeg?resize=600%2C600&ssl=1",
-  });
-  await createFlavor({
-    name: "Diet Dr Pepper Cherry Chocolate",
-    description: "good",
-    photo_URL:
-      "https://simferopol.e-sweets.ru/wa-data/public/shop/products/66/02/266/images/251/251.970.jpg",
-  });
-  await createFlavor({
-    name: "Dr Pepper Berries & Cream",
-    description: "good",
-    photo_URL:
-      "https://hips.hearstapps.com/hmg-prod/images/dr-pepper-berries-and-cream-flavored-soda-1644933954.jpg?resize=1024:*",
-  });
-  await createFlavor({
-    name: "Heritage Dr Pepper",
-    description: "good",
-    photo_URL:
-      "https://candyfunhouse.ca/cdn/shop/files/dr-pepper-made-with-sugar-candy-funhouse.jpg?v=1695756241",
-  });
-  await createFlavor({
+
+   await createFlavor({
     name: "Dr Pepper Blackberry",
     description: "Brand new in 2025, blackberry flavor.",
     photo_URL:
@@ -321,6 +227,7 @@ const seedData = async () => {
     content: "Invalid opinion",
   });
 };
+
 
 const selectUserByUsername = async (username) => {
   const SQL = `SELECT * FROM users WHERE username = $1`;

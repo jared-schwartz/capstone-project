@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import Comment from "./comments";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
-export default function Review({ setRefresh, review, token, user, editing = false, editable = false }) {
+export default function Review({ review, token, user, editing = false, editable = false }) {
     const [edit, setEdit] = useState(editing)
     const [tempReview, setTempReview] = useState(review)
     const [thisReview, setThisReview] = useState(review)
@@ -14,7 +15,7 @@ export default function Review({ setRefresh, review, token, user, editing = fals
     useEffect(() => {
         async function getComments() {
             try {
-                const response = await fetch(`/api/comments/${review.id}`, {
+                const response = await fetch(`/api/reviews/comments/${review.id}`, {
                     headers: { "Content-Type": "application/json" }
                 });
                 if (!response.ok) throw new Error("Failed to fetch")
@@ -83,7 +84,6 @@ export default function Review({ setRefresh, review, token, user, editing = fals
 
 
             const data = await response.json();
-            setRefresh(true)
             setThisReview(data)
             setEdit(false)
 
@@ -112,7 +112,7 @@ export default function Review({ setRefresh, review, token, user, editing = fals
                             />
                             <span>/5</span>
                         </div>
-                        <p className="username">review by {user.username}</p>
+                        <p className="username"><NavLink to={`/flavors/${review.flavor_id}`}>{review.flavor}</NavLink> review by {user.username}</p>
                     </div>
 
                     <hr />
@@ -136,7 +136,7 @@ export default function Review({ setRefresh, review, token, user, editing = fals
                             <span className="score">{thisReview.score}</span>
                             <span className="out-of">/5</span>
                         </div>
-                        <p className="username">review by {review.username}</p>
+                        <p className="username"><NavLink to={`/flavors/${review.flavor_id}`}>{review.flavor}</NavLink> review by {review.username}</p>
                     </div>
 
                     <div className="review-content">
@@ -164,10 +164,9 @@ export default function Review({ setRefresh, review, token, user, editing = fals
                     {user && (
                         <>
                             {userComment ? (
-                                <Comment setRefresh={setRefresh} comment={userComment} token={token} reviewer={review.username} editable={true} />
+                                <Comment comment={userComment} token={token} reviewer={review.username} editable={true} />
                             ) : (
                                 <Comment
-                                    setRefresh={setRefresh}
                                     comment={{ user_id: user.id, review_id: review.id, username: user.username, content: "" }}
                                     token={token} reviewer={review.username} editable={true} editing={true}
                                 />

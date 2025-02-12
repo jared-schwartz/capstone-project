@@ -409,15 +409,48 @@ const getReviewsByFlavor = async (id) => {
   } catch (error) { }
 };
 
-const getComments = async (id) => {
+const getReviewsByUser = async (id) => {
+  try {
+    const SQL = `SELECT reviews.id, reviews.user_id, reviews.flavor_id, reviews.content, reviews.score,
+    users.username, flavors.name as flavor
+    FROM reviews
+    INNER JOIN users ON reviews.user_id = users.id
+    INNER JOIN flavors ON reviews.flavor_id = flavors.id
+    WHERE user_id = $1;`;
+    const response = await client.query(SQL, [id]);
+    if (response.rows.length === 0) {
+      return null;
+    }
+    return response.rows;
+  } catch (error) { }
+};
+
+const getCommentsByReview = async (id) => {
+  try {
+    const SQL = `SELECT comments.id, comments.user_id, comments.review_id, comments.content,
+       users.username
+FROM comments
+INNER JOIN users ON comments.user_id = users.id
+INNER JOIN reviews ON comments.review_id = reviews.id
+WHERE user_id = $1;`;
+    const response = await client.query(SQL, [id]);
+    if (response.rows.length === 0) {
+      return null;
+    }
+    return response.rows;
+  } catch (error) { }
+};
+
+const getCommentsByUser = async (id) => {
   try {
     const SQL = `SELECT comments.id, comments.user_id, comments.review_id, comments.content,
     users.username
     FROM comments
     INNER JOIN users ON comments.user_id = users.id
     INNER JOIN reviews ON comments.review_id = reviews.id
-    WHERE review_id = $1;`;
+    WHERE comments.user_id = $1;`;
     const response = await client.query(SQL, [id]);
+    console.log(response)
     if (response.rows.length === 0) {
       return null;
     }
@@ -503,12 +536,13 @@ module.exports = {
   selectFlavorById,
   updateFlavorScore,
   getReviewsByFlavor,
+  getReviewsByUser,
   selectUserByUsername,
   createReview,
-
-  createComment,
   deleteReview,
+  createComment,
+  getCommentsByReview,
+  getCommentsByUser,
   deleteComment,
-  getComments,
   authenticate
 };

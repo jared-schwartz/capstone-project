@@ -41,7 +41,7 @@ function App() {
           <Route path="/login" element={<Login setUser={setUser} setToken={setToken} />} />
           <Route path="/register" element={<Register setUser={setUser} setToken={setToken} />} />
           <Route path="/flavors/:flavor_id" element={<FlavorDetails user={user} token={token} />} />
-          <Route path="/account" element={<Account user={user} setUser={setUser} setToken={setToken} />} />
+          <Route path="/account" element={<Account user={user} setUser={setUser} setToken={setToken} token={token} />} />
           <Route path="/admin" element={<Admin user={user} setUser={setUser} setToken={setToken} />} />
         </Routes>
       </div>

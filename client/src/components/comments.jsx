@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-export default function Comment({ setRefresh, comment, token, editing = false, editable = false }) {
+export default function Comment({ comment, token, editing = false, editable = false }) {
     const [edit, setEdit] = useState(editing)
     const [tempComment, setTempComment] = useState(comment)
     const [thisComment, setThisComment] = useState(comment)
@@ -49,7 +49,6 @@ export default function Comment({ setRefresh, comment, token, editing = false, e
 
             const data = await response.json();
             setThisComment({ ...data, username: tempComment.username })
-            setRefresh(true)
             setEdit(false)
 
         } catch (ex) {

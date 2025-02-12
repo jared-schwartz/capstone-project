@@ -2,110 +2,108 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Review from "../components/reviews";
 
-const testFlavor = {
-    name: "Original Doctor Pepper",
-    description: "It's the sweetest one you'll ever taste in your life!!!",
-    score: 5,
-    photo_url: "https://i5.walmartimages.com/seo/Doctor-Pepper-Soda-12oz-Cans-Pack-of-48_f311a391-8c1c-4b38-b7f7-788d26359f44.4eb13d8fade9191d2c4f05fdc7cca03f.jpeg?odnHeight=2000&odnWidth=2000&odnBg=FFFFFF"
-}
-
-const testReviews = [
-    {
-        id: 1,
-        username: "Jessie",
-        flavor: testFlavor.name,
-        score: 5,
-        content: "Wow it's so good. Dr. pepper is the best!"
-    },
-    {
-        id: 2,
-        username: "Jared",
-        flavor: testFlavor.name,
-        score: 5,
-        content: "Wow it's so good. Dr. pepper is the best!"
-    },
-    {
-        id: 3,
-        username: "Karl",
-        flavor: testFlavor.name,
-        score: 5,
-        content: "Wow it's so good. Dr. pepper is the best!"
-    },
-    {
-        id: 4,
-        username: "Johnathan",
-        flavor: testFlavor.name,
-        score: 5,
-        content: "Wow it's so good. Dr. pepper is the best!"
-    }
-]
-
 export default function FlavorDetails({ user, token }) {
-    const [reviews, setReviews] = useState(testReviews)
+    const [reviews, setReviews] = useState()
+    //Used to refresh the page when sumbmiting items
+    const [refresh, setRefresh] = useState(false)
+    const [flavor, setFlavor] = useState();
     const [userReview, setUserReview] = useState()
     const { flavor_id } = useParams();
 
-
     useEffect(() => {
-        //Get the current user's id
-        const name = "Karl"
-
-
-        if (name) {
-            // Check if the user has already posted a review
-            const foundReview = reviews.find((review) => review.username === name);
-            if (foundReview) {
-                setUserReview(foundReview); // Save user's review
-                setReviews(reviews.filter((review) => review.username !== name)); // Filter out the user's review
-              //  console.log("Found the review!", foundReview)
-            } else {
-                setReviews(reviews);
-             //   console.log("Did not find the review!")
+        const fetchFlavor = async () => {
+            try {
+                const response = await fetch(`/api/flavors/${flavor_id}`, {
+                    headers: { "Content-Type": "application/json" }
+                });
+                if (!response.ok) throw new Error("Failed to fetch")
+                const data = await response.json();
+                setFlavor(data);
+            }
+            catch (ex) {
+                throw new Error("empty  ");
             }
         }
-    }, [])
+        fetchFlavor();
+    }, [refresh, user])
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const response = await fetch(`/api/flavors/reviews/${flavor_id}`, {
+                    headers: { "Content-Type": "application/json" }
+                });
+                if (!response.ok) throw new Error("Failed to fetch");
+
+
+
+                const data = await response.json();
+
+                if (user && data.find((review) => review.user_id == user.id)) {
+                    setUserReview(data.find((review) => review.user_id == user.id))
+                    setReviews(data.filter((review) => review.user_id !== user.id))
+                } else {
+                    setReviews(data)
+                }
+            } catch (ex) {
+                throw new Error("empty ")
+            }
+        };
+
+        fetchReviews();
+        setRefresh(false);
+    }, []);
 
 
     return (
-        <div id="flavorsDetailsPage">
-            <div class="split-view">
-                <div>
-                    <p>{testFlavor.name}</p>
-                    <p>ID: {flavor_id}</p>
-                    <img src={testFlavor.photo_url} />
-                </div>
-                <div>
-                    <p>{testFlavor.description}</p>
-                    <p>Average Rating: {testFlavor.score}</p>
-                </div>
+        <div id="flavor-details">
+            <div className="split-view">
+                {flavor ? (
+                    <>
+                        <div className="split-left">
+                            <img src={flavor.photo_url} alt={flavor.name} />
+                        </div>
+                        <div className="split-right">
+                            <h2>{flavor.name}</h2>
+                            <p>Description: {flavor.description}</p>
+                            <p>Average Rating: {flavor.average_score}</p>
+                        </div>
+                    </>
+                ) : (
+                    <p>Loading</p>
+                )}
             </div>
             <div id="reviews-and-comments">
-                {reviews ? (
-                    <>
-                        {console.log(reviews)}
-                        {userReview ? (
-                            <>
-                                {console.log("Have the review!", userReview)}
-                                <p>See your review</p>
-                                <Review review={userReview} editable={true} edit={false} />
-                                {reviews.map((review) => (
-                                    <Review review={review} />
-                                ))}
-                            </>
-                        ) : (
-                            <>
-                                {console.log("Don't have the review")}
-                                <Review editing={true} review={{ score: 0.0, content: "" }} editable={true} />
-                                {reviews.map((review) => (
-                                    <Review review={review} />
-                                ))}
-                            </>
-                        )
+                <h2>Reviews</h2>
+                {user && flavor && <>
+                    {userReview ? (
+                        <>
+                            <Review setRefresh={setRefresh} user={user} review={userReview} token={token} editable={true} edit={false} />
+                        </>
+                    ) : (
 
-                        }
-                    </>
-                ) : <p>Sorry, no reviews were found</p>}
+                        <Review
+                            setRefresh={setRefresh}
+                            editing={true}
+                            user={user}
+                            review={{ score: 1, content: "", user_id: user.id, flavor_id: flavor.id, username: user.username }}
+                            token={token}
+                            editable={true}
+                        />
+
+                    )}
+                </> || <p>Login or register to create reviews!</p>}
+
+
+                {reviews && reviews.map((review) => (
+                    <Review setRefresh={setRefresh} key={review.id} user={user} review={review} token={token} />
+                ))}
+
+                <div style={{ display: reviews ? "none" : "block" }}>
+                    <p>No Reviews</p>
+                </div>
             </div>
+
         </div>
-    )
+    );
 }

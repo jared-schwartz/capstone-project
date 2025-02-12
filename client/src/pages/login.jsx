@@ -15,9 +15,7 @@ async function loginUser(credentials) {
       const errorData = await response.json();
       throw new Error(errorData.error || "Login failed");
     }
-
     const result = await response.json();
-    //console.log(result);
     return result;
   } catch (error) {
     console.error("Login error:", error.message);
@@ -76,7 +74,7 @@ function LoginForm({ setUser, setToken }) {
             type="text"
             onChange={handleChange}
           />
-                    <br />
+          <br />
         </label>
         <br />
         <label>

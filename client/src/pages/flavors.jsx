@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 export default function Flavors() {
   const [flavors, setFlavors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,7 +52,8 @@ export default function Flavors() {
     setNameSortOrder(null); 
   };
 
-  const handleFlavorClick = (flavor_id) => {
+  const handleFlavorClick = async (flavor_id) => {
+   
     navigate(`/flavors/${flavor_id}`);
 };
 

@@ -165,33 +165,6 @@ export default function Admin({ user, setUser, setToken }) {
             </table>
           </div>
 
-          <h3>Add New Flavor:</h3>
-          <form onSubmit={handlePostFlavor}>
-            <label htmlFor="flavor-name">Flavor Name:</label><br />
-            <input
-              type="text"
-              id="flavor-name"
-              name="name"
-              value={newFlavor.name}
-              onChange={handleFlavorInputChange}
-              required
-            /><br />
-
-            <label htmlFor="flavor-description">Description:</label><br />
-            <textarea
-              id="flavor-description"
-              name="description"
-              value={newFlavor.description}
-              onChange={handleFlavorInputChange}
-            /><br />
-
-            <button type="submit" disabled={postingFlavor}>
-              {postingFlavor ? "Posting..." : "Post Flavor"}
-            </button>
-
-            {postFlavorError && <div style={{ color: "red" }}>{postFlavorError}</div>}
-          </form>
-
         </div>
       ) : (
         <div>Loading admin panel...</div>

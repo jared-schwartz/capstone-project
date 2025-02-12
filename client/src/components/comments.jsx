@@ -6,6 +6,8 @@ export default function Comment({ setRefresh, comment, token, editing = false, e
     const [tempComment, setTempComment] = useState(comment)
     const [thisComment, setThisComment] = useState(comment)
 
+    console.log(comment)
+
     async function onDelete() {
         try {
             const response = await fetch("/api/comments", {
@@ -40,8 +42,8 @@ export default function Comment({ setRefresh, comment, token, editing = false, e
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    "user_id": tempComment.user_id,
-                    "review_id": tempComment.review_id,
+                    "user_id": comment.user_id,
+                    "review_id": comment.review_id,
                     "content": tempComment.content
                 })
             });

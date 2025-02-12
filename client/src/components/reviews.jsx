@@ -3,7 +3,7 @@ import Comment from "./comments";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
-export default function Review({ setRefresh, review, token, user, editing = false, editable = false }) {
+export default function Review({ setRefresh, refresh, review, token, user, editing = false, editable = false }) {
     const [edit, setEdit] = useState(editing)
     const [tempReview, setTempReview] = useState(review)
     const [thisReview, setThisReview] = useState(review)
@@ -34,7 +34,7 @@ export default function Review({ setRefresh, review, token, user, editing = fals
             }
         }
         getComments();
-    }, [review])
+    }, [refresh])
 
     async function onDelete() {
         try {
@@ -85,6 +85,7 @@ export default function Review({ setRefresh, review, token, user, editing = fals
             const data = await response.json();
             setRefresh(true)
             setThisReview(data)
+            console.log(thisReview)
             setEdit(false)
 
         } catch (ex) {
@@ -159,27 +160,30 @@ export default function Review({ setRefresh, review, token, user, editing = fals
                     </button>
                 </div>
             }
-            {showComments && (
-                <>
-                    {user && (
-                        <>
-                            {userComment ? (
+            <div style={{ "display": `${showComments ? "block" : "none"}` }}>
+                {user && (
+                    <>
+                        {userComment ? (
+                            <>
                                 <Comment setRefresh={setRefresh} comment={userComment} token={token} reviewer={review.username} editable={true} />
-                            ) : (
+                            </>
+                        ) : (
+                            <>
+                                {console.log("Review id", review.id)}
                                 <Comment
                                     setRefresh={setRefresh}
-                                    comment={{ user_id: user.id, review_id: review.id, username: user.username, content: "" }}
+                                    comment={{ user_id: user.id, review_id: thisReview.id, username: user.username, content: "" }}
                                     token={token} reviewer={review.username} editable={true} editing={true}
                                 />
-                            )}
-                        </>
-                    ) || <p>Login or Register to make comments!</p>}
-                    {
-                        comments.map((comment) => <Comment comment={comment} reviewer={review.username} />)
-                    }
-                    {comments.length < 1 && !userComment && <p>Nobody has commented here</p>}
-                </>
-            )}
+                            </>
+                        )}
+                    </>
+                ) || <p>Login or Register to make comments!</p>}
+                {
+                    comments.map((comment) => <Comment comment={comment} reviewer={review.username} />)
+                }
+                {comments.length < 1 && !userComment && <p>Nobody has commented here</p>}
+            </div>
 
         </div>
 

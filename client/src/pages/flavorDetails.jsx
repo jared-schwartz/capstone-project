@@ -78,19 +78,21 @@ export default function FlavorDetails({ user, token }) {
                 {user && flavor && <>
                     {userReview ? (
                         <>
-                            <Review setRefresh={setRefresh} user={user} review={userReview} token={token} editable={true} edit={false} />
+                            {console.log("flavor id", flavor_id)}
+                            <Review setRefresh={setRefresh} refresh={refresh} user={user} review={userReview} token={token} editable={true} edit={false} />
                         </>
                     ) : (
-
-                        <Review
-                            setRefresh={setRefresh}
-                            editing={true}
-                            user={user}
-                            review={{ score: 1, content: "", user_id: user.id, flavor_id: flavor.id, username: user.username }}
-                            token={token}
-                            editable={true}
-                        />
-
+                        <>
+                            <Review
+                                setRefresh={setRefresh}
+                                refresh={refresh}
+                                editing={true}
+                                user={user}
+                                review={{ score: 1, content: "", user_id: user.id, flavor_id: flavor.id, username: user.username }}
+                                token={token}
+                                editable={true}
+                            />
+                        </>
                     )}
                 </> || <p>Login or register to create reviews!</p>}
 

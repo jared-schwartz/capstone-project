@@ -65,7 +65,6 @@ export default function Account({ user, setUser, setToken }) {
           <h2><u>Welcome, {userData.username}</u></h2>
 
           <p>Username: {userData.username}</p>
-          <p>Admin: {userData.is_admin ? "True" : "False"}</p>
           <button onClick={handleLogout}>Log Out</button>
           <br />
           <br />

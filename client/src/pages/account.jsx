@@ -7,6 +7,7 @@ export default function Account({ user, setUser, setToken, token }) {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(false)
   const [error, setError] = useState(null);
   const [reviews, setReviews] = useState(null)
   const [comments, setComments] = useState(null)
@@ -63,7 +64,7 @@ export default function Account({ user, setUser, setToken, token }) {
     };
 
     fetchReviews();
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     async function getComments() {
@@ -72,7 +73,7 @@ export default function Account({ user, setUser, setToken, token }) {
           headers: { "Content-Type": "application/json" }
         });
         if (!response.ok) throw new Error("Failed to fetch")
-        console.log("hello!")
+        const data = await response.json();
         setComments(data)
       } catch (ex) {
         throw new Error("empty ");
@@ -80,7 +81,7 @@ export default function Account({ user, setUser, setToken, token }) {
       }
     }
     getComments();
-  })
+  }, [refresh])
 
 
   const handleLogout = () => {
@@ -102,22 +103,23 @@ export default function Account({ user, setUser, setToken, token }) {
     <div id="account-page">
       <h1>My Account</h1>
 
-      {userData ? (
+      {user ? (
         <div>
-          <h2><u>Welcome, {userData.username}</u></h2>
+          <h2><u>Welcome, {user.username}</u></h2>
 
-          <p>Username: {userData.username}</p>
-          <p>Admin: {userData.is_admin ? "True" : "False"}</p>
+          <p>Username: {user.username}</p>
+          <p>Admin: {user.is_admin ? "True" : "False"}</p>
           <button className="account-page-button" onClick={handleLogout}>Log Out</button>
           <br />
           <br />
-          {userData.is_admin && (
+          {user.is_admin && (
             <button className="account-page-button" onClick={() => navigate("/admin")}>Admin Panel</button>
           )}
         </div>
       ) : (
         <div>Loading user data...</div>
       )}
+
       <div id="reviews-and-comments">
         <h2>Reviews</h2>
 

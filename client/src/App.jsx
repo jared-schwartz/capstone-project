@@ -17,7 +17,6 @@ function App() {
 
   const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : null);
   const [token, setToken] = useState(storedToken ? (storedToken) : null);
-  //     
 
   useEffect(() => {
     if (user) {
@@ -27,6 +26,7 @@ function App() {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
     }
+    console.log(storedUser, user)
   }, [user, token]);
 
   return (

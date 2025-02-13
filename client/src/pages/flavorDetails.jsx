@@ -7,6 +7,7 @@ export default function FlavorDetails({ user, token }) {
     const [reviews, setReviews] = useState()
     const [flavor, setFlavor] = useState();
     const [userReview, setUserReview] = useState()
+    const [refresh, setRefresh] = useState(false);
     const { flavor_id } = useParams();
 
     useEffect(() => {
@@ -39,7 +40,8 @@ export default function FlavorDetails({ user, token }) {
                 const data = await response.json();
 
                 if (user && data.find((review) => review.user_id == user.id)) {
-                    setUserReview(data.find((review) => review.user_id == user.id))
+                    const useRev = await data.find((review) => review.user_id == user.id)
+                    setUserReview(useRev)
                     setReviews(data.filter((review) => review.user_id !== user.id))
                 } else {
                     setReviews(data)
@@ -50,7 +52,7 @@ export default function FlavorDetails({ user, token }) {
         };
 
         fetchReviews();
-    }, []);
+    }, [refresh]);
 
 
     return (
@@ -74,29 +76,31 @@ export default function FlavorDetails({ user, token }) {
 
             <div id="reviews-and-comments">
                 <h2>Reviews</h2>
-                {reviews && <>
-                    {userReview ? (
-                        <>
-                            <Review user={user} review={userReview} token={token} editable={true} edit={false} />
-                        </>
-                    ) : (
-
+                {user && (userReview ? (
+                    <>
+                        {console.log()}
+                        <Review user={user} review={userReview} token={token} editable={true} edit={false} />
+                    </>
+                ) : (
+                    <>
                         <Review
-
+                            setRefresh={setRefresh}
+                            refresh={refresh}
                             editing={true}
                             user={user}
-                            review={{ score: 1, content: "", user_id: user.id, flavor_id: flavor.id, username: user.username }}
+                            review={{ score: 1, content: "", user_id: user.id, flavor_id: flavor_id, username: user.username }}
                             token={token}
                             editable={true}
                         />
+                    </>
+                )) || <p>Login or register to create reviews!</p>}
 
-                    )}
-                </> || <p>Login or register to create reviews!</p>}
 
 
                 {reviews && reviews.map((review) => (
                     <Review key={review.id} user={user} review={review} token={token} />
-                ))}
+                )) || <p>No Reviews</p>}
+
 
                 <div style={{ display: reviews ? "none" : "block" }}>
                     <p>No Reviews</p>

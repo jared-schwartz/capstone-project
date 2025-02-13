@@ -40,8 +40,8 @@ export default function Comment({ comment, token, editing = false, editable = fa
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    "user_id": tempComment.user_id,
-                    "review_id": tempComment.review_id,
+                    "user_id": comment.user_id,
+                    "review_id": comment.review_id,
                     "content": tempComment.content
                 })
             });

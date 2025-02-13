@@ -30,7 +30,7 @@ body {
   text-align: center;
 }
 
-#account-page button {
+.account-page-button {
   background-color: white;
   border: none;
   color: black;

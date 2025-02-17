@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import Comment from "./comments";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -14,7 +15,7 @@ export default function Review({ setRefresh, refresh, review, token, user, editi
     useEffect(() => {
         async function getComments() {
             try {
-                const response = await fetch(`/api/comments/${review.id}`, {
+                const response = await fetch(`/api/reviews/comments/${review.id}`, {
                     headers: { "Content-Type": "application/json" }
                 });
                 if (!response.ok) throw new Error("Failed to fetch")
@@ -52,7 +53,7 @@ export default function Review({ setRefresh, refresh, review, token, user, editi
             })
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-            setTempReview({ score: 1, content: "", user_id: user.id, flavor_id: review.flavor_id, username: user.username })
+            setTempReview({ score: 1, content: "", user_id: user.id, flavor_id: thisReview.flavor_id, username: user.username })
 
             setEdit(true);
 
@@ -73,17 +74,14 @@ export default function Review({ setRefresh, refresh, review, token, user, editi
                 },
                 body: JSON.stringify({
                     "user_id": user.id,
-                    "flavor_id": review.flavor_id,
+                    "flavor_id": thisReview.flavor_id,
                     "content": tempReview.content,
                     "score": tempReview.score
                 })
             });
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-
-
             const data = await response.json();
-            setRefresh(true)
             setThisReview(data)
             console.log(thisReview)
             setEdit(false)
@@ -113,7 +111,7 @@ export default function Review({ setRefresh, refresh, review, token, user, editi
                             />
                             <span>/5</span>
                         </div>
-                        <p className="username">review by {user.username}</p>
+                        <p className="username"><NavLink to={`/flavors/${review.flavor_id}`}>{review.flavor}</NavLink> review by {user.username}</p>
                     </div>
 
                     <hr />
@@ -137,7 +135,7 @@ export default function Review({ setRefresh, refresh, review, token, user, editi
                             <span className="score">{thisReview.score}</span>
                             <span className="out-of">/5</span>
                         </div>
-                        <p className="username">review by {review.username}</p>
+                        <p className="username"><NavLink to={`/flavors/${thisReview.flavor_id}`}>{thisReview.flavor}</NavLink> review by {review.username}</p>
                     </div>
 
                     <div className="review-content">
@@ -165,22 +163,22 @@ export default function Review({ setRefresh, refresh, review, token, user, editi
                     <>
                         {userComment ? (
                             <>
+                                {console.log()}
                                 <Comment setRefresh={setRefresh} comment={userComment} token={token} reviewer={review.username} editable={true} />
                             </>
                         ) : (
                             <>
-                                {console.log("Review id", review.id)}
                                 <Comment
                                     setRefresh={setRefresh}
                                     comment={{ user_id: user.id, review_id: thisReview.id, username: user.username, content: "" }}
-                                    token={token} reviewer={review.username} editable={true} editing={true}
+                                    token={token} reviewer={thisReview.username} editable={true} editing={true}
                                 />
                             </>
                         )}
                     </>
                 ) || <p>Login or Register to make comments!</p>}
                 {
-                    comments.map((comment) => <Comment comment={comment} reviewer={review.username} />)
+                    comments.map((comment) => <Comment comment={comment} reviewer={thisReview.username} />)
                 }
                 {comments.length < 1 && !userComment && <p>Nobody has commented here</p>}
             </div>

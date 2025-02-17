@@ -17,8 +17,10 @@ const {
   getReviewsByFlavor,
   deleteReview,
   deleteComment,
-  getComments,
-  updateFlavorScore
+  updateFlavorScore,
+  getCommentsByReview,
+  getReviewsByUser,
+  getCommentsByUser
 } = require("./db");
 
 const bcrypt = require("bcrypt");
@@ -148,22 +150,41 @@ app.put("/api/flavors/score/:id", async (req, res) => {
 // Fetch Reviews for Flavor
 app.get("/api/flavors/reviews/:id", async (req, res, next) => {
   try {
-    const review = await getReviewsByFlavor(req.params.id)
-    res.json(review);
+    const reviews = await getReviewsByFlavor(req.params.id)
+    res.json(reviews);
   } catch (error) {
     next(ex);
   }
 });
 
-app.get("/api/comments/:id", async (req, res, next) => {
+// Fetch Reviews for Use
+app.get("/api/users/reviews/:id", async (req, res, next) => {
   try {
-    const comment = await getComments(req.params.id);
+    const reviews = await getReviewsByUser(req.params.id)
+    res.json(reviews);
+  } catch (error) {
+    next(ex);
+  }
+});
+
+app.get("/api/reviews/comments/:id", async (req, res, next) => {
+  try {
+    const comment = await getCommentsByReview(req.params.id);
     res.json(comment);
   } catch (error) {
     next(ex);
   }
 });
 
+app.get("/api/users/comments/:id", async (req, res, next) => {
+  try {
+    const comment = await getCommentsByUser(req.params.id);
+    console.log(comment)
+    res.json(comment);
+  } catch (error) {
+    next(ex);
+  }
+});
 
 app.get("/api/authorize", async (req, res, next) => {
   try {

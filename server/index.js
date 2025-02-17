@@ -6,6 +6,7 @@ const {
   selectUserById,
   createFlavor,
   fetchFlavors,
+  fetchReviews,
   createReview,
   createComment,
   generateToken,
@@ -45,6 +46,22 @@ app.get("/api/users", async (req, res, next) => {
     next(ex);
   }
 });
+// Fetch all reviews
+app.get("/api/reviews", async (req, res, next) => {
+  try {
+    const users = await fetchReviews();
+    res.json(reviews);
+  } catch (ex) {
+    next(ex);
+  }
+});
+
+
+
+
+
+
+
 // Fetch Single User
 app.get("/api/user/:id", async (req, res, next) => {
   try {

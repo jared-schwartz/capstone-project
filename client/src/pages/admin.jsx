@@ -60,6 +60,18 @@ export default function Admin({ user, setUser, setToken }) {
         const flavorsData = await flavorsResponse.json();
         setAllFlavors(flavorsData);
 
+        const reviewsResponse = await fetch("/api/reviews", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (!flavorsResponse.ok) {
+          throw new Error("Failed to fetch flavors");
+        }
+        const reviewsData = await flavorsResponse.json();
+        setAllReviews(reviewsData);
+
       } catch (err) {
         setError(err.message);
       } finally {

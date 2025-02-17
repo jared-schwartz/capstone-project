@@ -6,7 +6,7 @@ export default function Comment({ setRefresh, comment, token, editing = false, e
     const [tempComment, setTempComment] = useState(comment)
     const [thisComment, setThisComment] = useState(comment)
 
-    console.log(comment)
+    //console.log(comment)
 
     async function onDelete() {
         try {

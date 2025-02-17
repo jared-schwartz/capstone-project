@@ -336,6 +336,14 @@ const fetchFlavors = async () => {
   return response.rows;
 };
 
+const fetchReviews = async () => {
+  const SQL = `
+    SELECT * FROM reviews;
+    `;
+  const response = await client.query(SQL);
+  return response.rows;
+};
+
 const updateFlavorScore = async (flavor_id) => {
   try {
 
@@ -478,7 +486,7 @@ module.exports = {
   getReviewsByFlavor,
   selectUserByUsername,
   createReview,
-
+  fetchReviews,
   createComment,
   deleteReview,
   deleteComment,

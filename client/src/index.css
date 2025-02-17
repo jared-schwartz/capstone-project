@@ -16,6 +16,33 @@ body {
   padding-right: 15px;
 }
 
+@media (max-width: 768px) { 
+  #navbar {
+      padding-top: 10px;
+      display: block;
+      height: 175px;
+      width: 99%;
+  }
+  body {
+      margin: 0;
+  }
+  #flavors-catalog li{
+    background-color: #2c2e2d;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  #flavors-catalog {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 20PX;
+    list-style-type: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 1200px;
+    margin-left: 10px;
+  }
+}
+
 #navbar a:hover {
   transition: ease-in-out all .4s;
   -moz-transition: ease-in-out all .4s;
@@ -108,15 +135,16 @@ footer {
 #home img {
   width: 30.5em;
 }
-
-#flavors-catalog {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20PX;
-  list-style-type: none;
-  padding: 0;
-  margin: 20px auto;
-  max-width: 1200px;
+@media (min-width: 768px) {
+  #flavors-catalog {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20PX;
+    list-style-type: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 1200px;
+  }
 }
 
 #flavors-catalog li {

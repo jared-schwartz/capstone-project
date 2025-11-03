@@ -290,7 +290,7 @@ td {
 .revCom {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;/
+  gap: 0.5em;
 }
 
 .review-header {
